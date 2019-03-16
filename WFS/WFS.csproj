@@ -130,6 +130,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\adver.png" />
     <Content Include="Content\blue.css" />
     <Content Include="Content\blue.png" />
     <Content Include="Content\bootstrap-theme.css" />
