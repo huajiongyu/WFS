@@ -1,0 +1,225 @@
+﻿@model OracleEF_Demo1.Models.UserCreateModel
+@using OracleEF_Demo1.Models
+@{
+    ViewBag.Title = "Users";
+}
+<div id="toolbar">
+    <div class="form-inline" role="form">
+        <div class="form-group">
+            <button type="button" class="btn btn-sm btn-primary" onclick="OpenModal('create')">创建新用户</button>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <table id="example" class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>用户帐号</th>
+                <th>名称</th>
+                <th>角色</th>
+                <th>创建日期</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+        <!-- tbody是必须的 -->
+    </table>
+</div>
+<!-- Button trigger modal -->
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="edit" action="">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">创建新用户</h4>
+                </div>
+                <div class="modal-body form-horizontal">
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">帐号：</label>
+                        <div class="col-md-8">
+                            @*<input type="text" class="form-control" id="account" placeholder="帐号">*@
+                            @Html.TextBoxFor(x=>x.Account, new {@class= "form-control",placeholder="帐号", autocomplete = "off" })
+                            @Html.ValidationMessageFor(m => m.Account)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">名称：</label>
+                        <div class="col-md-8">
+                            @*<input type="text" class="form-control" id="account" placeholder="帐号">*@
+                            @Html.TextBoxFor(x => x.Name, new { @class = "form-control", placeholder= "名称", autocomplete = "off" })
+                            @Html.ValidationMessageFor(m => m.Name)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">邮箱地址：</label>
+                        <div class="col-md-8">
+                            <input type="EMail" class="form-control" id="EMail" placeholder="邮箱地址" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">角色：</label>
+                        <div class="col-md-8">
+                            <select name="RoleType" class="form-control">
+                                <option value="0">财务人员</option>
+                                <option value="1">审批人员</option>
+                                <option value="2">经费用户</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">密码：</label>
+                        <div class="col-md-8">
+                            <input type="password" class="form-control" name="pwd" id="pwd" autocomplete="off" placeholder="密码">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="save" onclick="CreateUser()">保存</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+
+@section scripts{
+
+    <script>
+        var table;
+        var editFlag = false;
+        var role = ["财务人员", "审批人员", "经费用户"];
+        $(function () {
+            table = $('#example').bootstrapTable({
+                url:'@Url.Action("Data")',
+                type:'post',
+                search: true,
+                searchAlign: 'right',
+                sidePagination: 'client',
+                pagination: true,
+                checkboxHeader: true,
+                toolbar: '#toolbar',
+                columns: [
+                    {
+                        field:'Account'
+                    }, {
+                        field: 'Name'
+                    }, {
+                        field: 'RoleType',
+                        formatter: function (value, full, index) {
+                            return role[value];
+                        }
+                    }, {
+                        field: 'CreateTime',
+                        formatter: function (value, full, index) {
+                            //后台返回的日期格式为/Date(1552197204000)/
+                            //所以在显示的时候需要处理一下
+
+                            //过滤空字符的可能
+                            if (!value) return "";
+
+                            var reg = /\d+/g;
+                            var _t = value.match(reg)[0];
+                            var date = new Date(parseInt(_t));
+                            return dateFtt('yyyy-MM-dd', date);
+                        }
+                    }, {
+                        field: 'Status',
+                        //formatter: function (value, full, index) {
+                        //    return role[value];
+                        //}
+                    }, {
+                        field: 'Account',
+                        formatter: function (value, full, index) {
+                            var op = [
+                                "<button type='button' class='btn btn-sm btn-primary' onclick='edit(" + index + ")'>修改</button>",
+                                "&nbsp;",
+                                "<button type='button' class='btn btn-sm btn-danger' onclick='deluser(\"" + value + "\")'>删除</button>"
+                            ].join('');
+                            return op;
+                        }
+                    }
+                ]
+            });
+        });
+
+        function OpenModal(modal) {
+
+            if (modal == 'create') {
+                $("#edit").attr('action', '@Url.Action("CreateUser")').resetForm();
+                $("#edit [name='Account']").attr('readonly', null);
+            } else {
+                $("#edit").attr('action', '@Url.Action("EditUser")');
+                $("#edit [name='Account']").attr('readonly', '');
+            }
+
+            $("#myModal").modal('show');
+        }
+
+        /**
+         * 异步创建用户
+         **/
+        function CreateUser() {
+
+            $("#edit").ajaxSubmit({
+                //url:'@Url.Action("CreateUser")',
+                type:'post',
+                success: function (data) {
+                    if (data && data.success) {
+                        $("#myModal").modal('hide');
+                        table.bootstrapTable('refresh')
+                    } else {
+                        alert(data.message);
+                    }
+                },
+                error: function (a, b, c) {
+                    console.log(a);
+                    console.log(b);
+                    console.log(c);
+                }
+            });
+        }
+
+        /**
+         *编辑方法
+         **/
+        function edit(index) {
+            var form = $("#edit");
+            var full = table.bootstrapTable('getData')[index];//获取表格的所有内容行
+            form.find('[name=Account]').val(full.Account);
+            form.find('[name=CreateTime]').val(full.CreateTime);
+            form.find('[name=EMail]').val(full.EMail);
+            form.find('[name=Name]').val(full.Name);
+            form.find('[name=Password]').val(full.Password);
+            form.find('[name=RoleType]').val(full.RoleType);
+            form.find('[name=Status]').val(full.Status);
+            //$("#myModal").modal("show");
+            OpenModal('edit');
+        }
+
+        /**
+         * 删除数据
+         * @@param name
+         */
+        function deluser(_data) {
+            var conf = confirm('确定删除此用户吗?');
+            if (!conf) return; 
+            $.ajax({
+                url: "@Url.Action("DelUser", "Treasury")",
+                data: { Account:_data},
+                success: function (data) {
+                    alert(data.message);
+                    $('#example').bootstrapTable('refresh');
+                    //console.log("成功" + data);
+                }
+            });
+        }
+    </script>
+}
