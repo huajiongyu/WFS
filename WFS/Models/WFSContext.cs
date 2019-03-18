@@ -39,6 +39,7 @@ namespace WFS.Models
 
         // public virtual DbSet<MyEntity> MyEntities { get; set; }
         public virtual DbSet<UserEntity> Users { get; set; }
+        public virtual DbSet<Form> Form { get; set; }
     }
 
     //public class MyEntity

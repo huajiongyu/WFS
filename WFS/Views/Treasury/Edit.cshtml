@@ -15,8 +15,16 @@
         <div class="form-group">
             <label class="control-label col-md-3">帐号：</label>
             <div class="col-md-8">
-                @Html.TextBoxFor(x => x.ID, new { @class = "form-control", placeholder = "帐号", autocomplete = "off" })
-                @Html.ValidationMessageFor(m => m.ID)
+                @if (Model == null)
+                {
+                    @Html.TextBoxFor(x => x.ID, new { @class = "form-control", placeholder = "帐号", autocomplete = "off" })
+                    @Html.ValidationMessageFor(m => m.ID)
+                }
+                else
+                {
+                    @Html.HiddenFor(x => x.ID)
+                    <label class="control-label">@Model.ID</label>
+                }
             </div>
         </div>
         <div class="form-group">
@@ -37,11 +45,24 @@
         <div class="form-group">
             <label class="control-label col-md-3">角色：</label>
             <div class="col-md-8">
-                <select name="Role" class="form-control">
-                    <option value="2">财务人员</option>
-                    <option value="1">审批人员</option>
-                    <option value="0">经费用户</option>
-                </select>
+                @Html.EnumDropDownListFor(x => x.Role, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">是否停用：</label>
+            <div class="col-md-8">
+                <div class="checkbox">
+                    <label>
+                        @if (Model == null || (Model.Disabled ?? false) == false)
+                        {
+                            <input type="checkbox" name="Disabled" value="true"/>
+                        }
+                        else
+                        {
+                            <input type="checkbox" name="Disabled" value="true" checked="checked"/>
+                        }
+                    </label>
+                </div>
             </div>
         </div>
         <div class="form-group">

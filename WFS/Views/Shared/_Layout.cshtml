@@ -159,7 +159,7 @@
 
                     <ul class="submenu">
                         <li class="">
-                            <a href="#" class="">
+                            <a href="@Url.Action("Index")" class="">
                                 <i class="menu-icon fa fa-caret-right"></i>
                                 用户信息管理
                                 <b class="arrow fa fa-angle-down"></b>
@@ -170,7 +170,7 @@
                         </li>
 
                         <li class="active">
-                            <a href="typography.html">
+                            <a href="@Url.Action("Edit")">
                                 <i class="menu-icon fa fa-caret-right"></i>
                                 经费管理
                             </a>
@@ -179,7 +179,7 @@
                         </li>
 
                         <li class="">
-                            <a href="elements.html">
+                            <a href="">
                                 <i class="menu-icon fa fa-caret-right"></i>
                                 收入管理
                             </a>
@@ -319,6 +319,7 @@
 <script src="~/Scripts/Ace-master/assets/js/respond.min.js"></script>
 <![endif]-->
     <script src="~/Scripts/bootstrap-table-master/dist/bootstrap-table.min.js"></script>
+    <script src="~/Scripts/bootstrap-table-master/dist/locale/bootstrap-table-zh-CN.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 @RenderSection("scripts", required: false)

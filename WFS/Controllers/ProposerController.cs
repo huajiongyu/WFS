@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -8,12 +9,13 @@ using WFS.Models;
 
 namespace WFS.Controllers
 {
-    public class TreasuryController : Controller
+    public class ProposerController : Controller
     {
-        #region 显示（查询）用户信息
+        #region 显示（查询）
         // GET: Treasury
         public ActionResult Index()
         {
+            var file = Request.Files[0];
             return View();
         }
 
@@ -34,11 +36,10 @@ namespace WFS.Controllers
 
         #endregion
 
-        #region 修改用户信息
+        #region 修改
 
         public ActionResult Edit(string id)
         {
-
             if (string.IsNullOrWhiteSpace(id))
             {
                 return View();
@@ -47,10 +48,10 @@ namespace WFS.Controllers
             {
                 using (var db = new WFSContext())
                 {
-                    var user = db.Users.FirstOrDefault(x => x.ID.Trim() == id.Trim());
-                    var model = Mapper.Map<UserViewModel>(user);
-                    model.PasswordConfirm = model.Password;
-                    return View(model);
+                    //var user = db.Users.FirstOrDefault(x => x.ID.Trim() == id.Trim());
+                    //var model = Mapper.Map<UserViewModel>(user);
+                    //model.PasswordConfirm = model.Password;
+                    return View();
                 }
             }
         }
@@ -97,10 +98,10 @@ namespace WFS.Controllers
         [HttpPost]
         public ActionResult Delete(string id)
         {
-            using(var db = new WFSContext())
+            using (var db = new WFSContext())
             {
                 id = id ?? "";//防止传空指针
-                var u = db.Users.FirstOrDefault(x=>x.ID.Trim() == id.Trim());
+                var u = db.Users.FirstOrDefault(x => x.ID.Trim() == id.Trim());
                 db.Users.Remove(u);
                 db.SaveChanges();
                 return Json(new JsonResultModel()
@@ -112,6 +113,59 @@ namespace WFS.Controllers
         }
         #endregion
 
-        
+        #region 私有方法
+        /// <summary>
+        /// 获取一个表单编号
+        /// </summary>
+        /// <returns></returns>
+        private string GetFormName()
+        {
+            using (var db = new WFSContext())
+            {
+                var preFix = "F" + DateTime.Now.ToString("yyyyMMdd");
+                var _maxForm = db.Form.Where(x => x.ID.Contains(preFix))
+                    .OrderBy(x => x.ID)
+                    .Max(x => x.ID);
+                if (_maxForm == null)
+                {
+                    return preFix + "0001";
+                }
+                else
+                {
+                    //此处应该考虑转换报错
+                    int _end = int.Parse(_maxForm.Substring(_maxForm.Length - 3, 3));
+                    _end++;
+                    return preFix + (_end.ToString("0000"));
+                }
+            }
+        }
+
+        /// <summary>
+        /// 保存上传的附件
+        /// </summary>
+        /// <param name="file">文件流</param>
+        /// <returns>文件id</returns>
+        private string SaveFile(HttpPostedFileBase file)
+        {
+            var fid = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            var fullname = Path.Combine(Server.MapPath("~/Upload/"), fid);
+            file.SaveAs(fullname);
+            return fid;
+        }
+
+        private bool DelFile(string FileID)
+        {
+            try
+            {
+                var fullname = Path.Combine(Server.MapPath("~/Upload/"), FileID);
+                System.IO.File.Delete(fullname);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        #endregion
     }
 }

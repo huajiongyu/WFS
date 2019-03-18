@@ -32,7 +32,7 @@
     <script>
         var table;
         var editFlag = false;
-        var role = ["经费用户", "审批人员", "财务人员"];
+        var role = ["普通用户", "审核人员", "财务人员"];
         $(function () {
             table = $('#example').bootstrapTable({
                 url:'@Url.Action("TableData")',
@@ -93,59 +93,6 @@
             });
         });
 
-        function OpenModal(modal) {
-
-            if (modal == 'create') {
-                $("#edit").attr('action', '@Url.Action("CreateUser")').resetForm();
-                $("#edit [name='Account']").attr('readonly', null);
-            } else {
-                $("#edit").attr('action', '@Url.Action("EditUser")');
-                $("#edit [name='Account']").attr('readonly', '');
-            }
-
-            $("#myModal").modal('show');
-        }
-
-        /**
-         * 异步创建用户
-         **/
-        function CreateUser() {
-
-            $("#edit").ajaxSubmit({
-                //url:'@Url.Action("CreateUser")',
-                type:'post',
-                success: function (data) {
-                    if (data && data.success) {
-                        $("#myModal").modal('hide');
-                        table.bootstrapTable('refresh')
-                    } else {
-                        alert(data.message);
-                    }
-                },
-                error: function (a, b, c) {
-                    console.log(a);
-                    console.log(b);
-                    console.log(c);
-                }
-            });
-        }
-
-        /**
-         *编辑方法
-         **/
-        function edit(index) {
-            var form = $("#edit");
-            var full = table.bootstrapTable('getData')[index];//获取表格的所有内容行
-            form.find('[name=Account]').val(full.Account);
-            form.find('[name=CreateTime]').val(full.CreateTime);
-            form.find('[name=EMail]').val(full.EMail);
-            form.find('[name=Name]').val(full.Name);
-            form.find('[name=Password]').val(full.Password);
-            form.find('[name=RoleType]').val(full.RoleType);
-            form.find('[name=Status]').val(full.Status);
-            //$("#myModal").modal("show");
-            OpenModal('edit');
-        }
 
         /**
          * 删除数据
@@ -155,8 +102,9 @@
             var conf = confirm('确定删除此用户吗?');
             if (!conf) return; 
             $.ajax({
-                url: "@Url.Action("DelUser", "Treasury")",
-                data: { Account:_data},
+                url: "@Url.Action("Delete", "Treasury")",
+                data: { id: _data },
+                method:'post',
                 success: function (data) {
                     alert(data.message);
                     $('#example').bootstrapTable('refresh');

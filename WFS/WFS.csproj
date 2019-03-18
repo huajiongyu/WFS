@@ -138,6 +138,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ProposerController.cs" />
     <Compile Include="Controllers\TreasuryController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -146,6 +147,7 @@
     <Compile Include="Models\DbSet_Entities.cs" />
     <Compile Include="Models\Enumerations.cs" />
     <Compile Include="Models\FormViewModels.cs" />
+    <Compile Include="Models\JsonResultModel.cs" />
     <Compile Include="Models\UserViewModels.cs" />
     <Compile Include="Models\WFSContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
