@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using WFS.Models;
 
 namespace WFS
 {
@@ -16,6 +17,11 @@ namespace WFS
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            AutoMapper.Mapper.Initialize(x => {
+                x.CreateMap<UserViewModel, UserEntity>();
+                x.CreateMap<UserEntity, UserViewModel>();
+            });
         }
     }
 }
