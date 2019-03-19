@@ -38,7 +38,7 @@ namespace WFS.Models
     /// <summary>
     /// 申请表单
     /// </summary>
-    public class Form
+    public class FormEntity
     {
         /// <summary>
         /// 表单编号

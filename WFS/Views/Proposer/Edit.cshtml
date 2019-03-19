@@ -1,33 +1,41 @@
 ﻿@using WFS.Models
-@model WFS.FormCreateModel
+@model FormCreateModel
 @{
     ViewBag.Title = "Index";
 }
 
 <form method="post" class="form-horizontal" style="padding: 15px;" enctype="multipart/form-data">
     <div class="form-group">
+        <label class="control-label col-md-2">单号</label>
+        <div class="col-md-10">
+            @Html.HiddenFor(m => m.ID)
+            @if (Model != null)
+            {
+                <label class="control-label">@Model.ID</label>
+            }
+        </div>
+    </div>
+
+    <div class="form-group">
         <label class="control-label col-md-2">类型</label>
         <div class="col-md-10">
-            @Html.HiddenFor(m=>m.ID)
-            <select name="type" class="form-control">
-                <option value="1">预算项目</option>
-                <option value="2">报销项目</option>
-            </select>
+            @Html.HiddenFor(m => m.ID)
+            @Html.EnumDropDownListFor(x => x.Type, new { @class = "form-control" })
         </div>
     </div>
 
     <div class="form-group">
         <label class="control-label col-md-2">标题</label>
         <div class="col-md-10">
-            @Html.TextBoxFor(x=>x.Title, new { @class= "form-control" })
-            @Html.ValidationMessageFor(x=>x.Title)
+            @Html.TextBoxFor(x => x.Title, new { @class = "form-control" })
+            @Html.ValidationMessageFor(x => x.Title)
         </div>
     </div>
 
     <div class="form-group">
         <label class="control-label col-md-2">内容</label>
         <div class="col-md-10">
-            @Html.TextAreaFor(m=>m.Content, new { @class="form-control", autocomplete="off", rows = "10" })
+            @Html.TextAreaFor(m => m.Content, new { @class = "form-control", autocomplete = "off", rows = "10" })
             @Html.ValidationMessageFor(x => x.Content)
         </div>
     </div>

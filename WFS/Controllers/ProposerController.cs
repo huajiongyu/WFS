@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using WFS.Models;
@@ -15,7 +16,6 @@ namespace WFS.Controllers
         // GET: Treasury
         public ActionResult Index()
         {
-            var file = Request.Files[0];
             return View();
         }
 
@@ -29,7 +29,7 @@ namespace WFS.Controllers
         {
             using (WFSContext db = new WFSContext())
             {
-                var rows = db.Users.ToList();
+                var rows = db.Forms.OrderByDescending(x=>x.CreateTime).ToList();
                 return Json(rows);
             }
         }
@@ -48,48 +48,100 @@ namespace WFS.Controllers
             {
                 using (var db = new WFSContext())
                 {
-                    //var user = db.Users.FirstOrDefault(x => x.ID.Trim() == id.Trim());
-                    //var model = Mapper.Map<UserViewModel>(user);
-                    //model.PasswordConfirm = model.Password;
-                    return View();
+                    var form = db.Forms.FirstOrDefault(x => x.ID.Trim() == id.Trim());
+                    if(form != null)
+                    {
+                        var model = Mapper.Map<FormCreateModel>(form);
+                        return View(model);
+                    }else
+                    {
+                        return View();
+                    }
                 }
             }
         }
 
         [HttpPost]
-        public ActionResult Edit(UserViewModel model)
+        public ActionResult Edit(FormCreateModel model)
         {
             if (ModelState.IsValid)
             {
-                UserEntity user;
+                FormEntity form;
                 using (WFSContext db = new WFSContext())
                 {
-                    user = db.Users.FirstOrDefault(x => x.ID.Trim() == model.ID.Trim());
-                    if (user == null) // 如果不存在则创建新用户
+                    //附件名称
+                    var FileName = string.Empty;
+                    var FileID = string.Empty;
+
+                    //判断是否有上传文件
+                    if(Request.Files.Count > 0)
                     {
-                        user = Mapper.Map<UserEntity>(model);
-                        user.CreateDate = DateTime.Now;
-                        db.Users.Add(user);
+                        //获取文件名
+                        FileName = Path.GetFileName(Request.Files[0].FileName);
+
+                        //保存文件，并获得保存ID（包含文件后缀名）
+                        FileID = SaveFile(Request.Files[0]);
+                    }
+
+                    form = db.Forms.FirstOrDefault(x => x.ID.Trim() == model.ID.Trim());
+                    if (form == null) // 如果不存在则创建新用户
+                    {
+                        //使用AutoMapper转换模型
+                        form = Mapper.Map<FormEntity>(model);
+
+                        //设置创建时间
+                        form.CreateTime = DateTime.Now;
+
+                        //设置当前登录人为创建人
+                        form.CreateBy = "hua";
+
+                        //获取一个新的单号
+                        form.ID = GetFormName();
+
+                        form.FileName = FileName;
+                        form.FileId = FileID;
+                        form.Status = FormStatus.Appling;
+
+                        //插入数据库
+                        db.Forms.Add(form);
                     }
                     else //如果ID存在，则修改用户
                     {
-                        user.Name = model.Name;
-                        user.Password = model.Password;
-                        user.Disabled = model.Disabled;
-                        user.EMail = model.EMail;
-                        user.Role = model.Role;
+                        //如果上传了附件，则删除旧附件，并更新新的文件名称及ID
+                        if (!string.IsNullOrWhiteSpace(FileName))
+                        {
+                            form.FileName = FileName;
+                            form.FileId = FileID;
+                        }
 
-                        db.Entry<UserEntity>(user).State = System.Data.Entity.EntityState.Modified;
+                        form.Title = model.Title;
+                        form.Content = model.Content;
+
+                        db.Entry<FormEntity>(form).State = System.Data.Entity.EntityState.Modified;
                     }
+
+                    //保存数据
                     db.SaveChanges();
                 }
                 return RedirectToAction("Index");
+            }else
+            {
+                StringBuilder errinfo = new StringBuilder();
+                foreach (var s in ModelState.Values)
+                {
+                    foreach (var p in s.Errors)
+                    {
+                        errinfo.AppendFormat("{0}\\n", p.ErrorMessage);
+                    }
+                }
+
+                return JavaScript("alert('" + errinfo.ToString() + "')");
             }
             return View();
         }
         #endregion
 
-        #region 删除用户信息
+        #region 删除
         /// <summary>
         /// 删除用户
         /// </summary>
@@ -101,13 +153,13 @@ namespace WFS.Controllers
             using (var db = new WFSContext())
             {
                 id = id ?? "";//防止传空指针
-                var u = db.Users.FirstOrDefault(x => x.ID.Trim() == id.Trim());
-                db.Users.Remove(u);
+                var u = db.Forms.FirstOrDefault(x => x.ID.Trim() == id.Trim());
+                db.Forms.Remove(u);
                 db.SaveChanges();
                 return Json(new JsonResultModel()
                 {
                     success = true,
-                    message = "删除成功"
+                    message = "删除成功!"
                 });
             }
         }
@@ -123,7 +175,7 @@ namespace WFS.Controllers
             using (var db = new WFSContext())
             {
                 var preFix = "F" + DateTime.Now.ToString("yyyyMMdd");
-                var _maxForm = db.Form.Where(x => x.ID.Contains(preFix))
+                var _maxForm = db.Forms.Where(x => x.ID.Contains(preFix))
                     .OrderBy(x => x.ID)
                     .Max(x => x.ID);
                 if (_maxForm == null)
@@ -148,7 +200,7 @@ namespace WFS.Controllers
         private string SaveFile(HttpPostedFileBase file)
         {
             var fid = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            var fullname = Path.Combine(Server.MapPath("~/Upload/"), fid);
+            var fullname = Path.Combine(Server.MapPath("~/Uploads/"), fid);
             file.SaveAs(fullname);
             return fid;
         }
@@ -157,7 +209,7 @@ namespace WFS.Controllers
         {
             try
             {
-                var fullname = Path.Combine(Server.MapPath("~/Upload/"), FileID);
+                var fullname = Path.Combine(Server.MapPath("~/Uploads/"), FileID);
                 System.IO.File.Delete(fullname);
                 return true;
             }

@@ -23,9 +23,9 @@ namespace WFS.Models
     public enum FormStatus
     {
         /// <summary>
-        /// 审批通回
+        /// 审批退回
         /// </summary>
-        [Display(Name = "审批通回")]
+        [Display(Name = "审批退回")]
         Return = 0,
 
         /// <summary>

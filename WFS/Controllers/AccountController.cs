@@ -18,5 +18,12 @@ namespace WFS.Controllers
         {
             return View();
         }
+
+        [HttpPost]
+        public ActionResult Login(string id, string pwd)
+        {
+            return RedirectToAction("Index", "Treasury");
+            //return View();
+        }
     }
 }

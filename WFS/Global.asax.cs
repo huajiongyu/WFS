@@ -21,6 +21,8 @@ namespace WFS
             AutoMapper.Mapper.Initialize(x => {
                 x.CreateMap<UserViewModel, UserEntity>();
                 x.CreateMap<UserEntity, UserViewModel>();
+                x.CreateMap<FormCreateModel, FormEntity>();
+                x.CreateMap<FormEntity, FormCreateModel>();
             });
         }
     }
