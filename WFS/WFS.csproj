@@ -137,6 +137,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AssessorController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProposerController.cs" />
@@ -1061,6 +1062,7 @@
     <Content Include="Views\Proposer\Index.cshtml" />
     <Content Include="Views\Treasury\Index.cshtml" />
     <Content Include="Views\Treasury\Edit.cshtml" />
+    <Content Include="Views\Assessor\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

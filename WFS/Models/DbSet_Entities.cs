@@ -68,6 +68,10 @@ namespace WFS.Models
         [MaxLength(4000)]
         public string Content { get; set; }
 
+        [Range(0, float.MaxValue, ErrorMessage = "请输入数字金额")]
+        [Required]
+        public decimal Cost { get; set; }
+
         /// <summary>
         /// 退回原因
         /// </summary>

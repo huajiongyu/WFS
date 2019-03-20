@@ -32,7 +32,11 @@ namespace WFS.Models
         [Required]
         [MaxLength(4000)]
         public string Content { get; set; }
-        
+
+        [Range(0, float.MaxValue)]
+        [Required]
+        public decimal Cost { get; set; }
+
         /// <summary>
         /// 附件原文件名
         /// </summary>
