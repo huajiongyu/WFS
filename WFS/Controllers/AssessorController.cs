@@ -34,6 +34,11 @@ namespace WFS.Controllers
         #endregion
 
         #region 表单操作
+        /// <summary>
+        /// 退过表单
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Pass(string ID)
         {
@@ -77,6 +82,12 @@ namespace WFS.Controllers
             }
         }
 
+        /// <summary>
+        /// 退回表单
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <param name="Remark"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult CallBack(string ID, string Remark)
         {
@@ -116,7 +127,7 @@ namespace WFS.Controllers
                 return Json(new JsonResultModel()
                 {
                     success = true,
-                    message = "操作成功.已通过申请。"
+                    message = "审批驳回成功。"
                 });
             }
         }

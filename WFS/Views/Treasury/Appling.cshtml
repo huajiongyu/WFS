@@ -40,7 +40,7 @@
         var StatusList = ["审批驳回", "审批中", "审批通过", "转帐完成"];
         $(function () {
             table = $('#example').bootstrapTable({
-                url: '@Url.Action("TableData")',
+                url: '@Url.Action("ApplingData")',
                 method: 'post',
                 search: true,
                 searchAlign: 'right',
@@ -110,13 +110,11 @@
                         formatter: function (value, full, index) {
                             //通过与退回按钮
                             var op = [
-                                "<button type='button' class='btn btn-sm btn-primary' onclick='pass(\"" + value + "\")'>通过</button>",
-                                "&nbsp;",
-                                "<button type='button' class='btn btn-sm btn-danger' onclick='CallBack(\"" + value + "\")'>驳回</button>"
+                                "<button type='button' class='btn btn-sm btn-primary' onclick='pass(\"" + value + "\")'>转帐</button>"
                             ].join('');
 
                             //只有表单状态在申请中才显示操作按钮
-                            if (full.Status == 1) {
+                            if (full.Status == 2) {
                                 return op;
                             } else {
                                 return '';
@@ -132,7 +130,8 @@
          * @@param name
          */
         function pass(_data) {
-            var conf = confirm('确定通过此表单吗?此操作不能回溯。');
+            var conf = confirm('正在施工中...');
+            return;
             if (!conf) return;
             $.ajax({
                 url: "@Url.Action("Pass")",
@@ -146,23 +145,5 @@
         });
         }
 
-        /**
-         * 删除数据
-         * @@param name
-         */
-        function CallBack(_data) {
-            var conf = confirm('确定驳回此表单吗?');
-            if (!conf) return;
-            $.ajax({
-                url: "@Url.Action("CallBack")",
-                data: { id: _data },
-                method: 'post',
-                success: function (data) {
-                    alert(data.message);
-                    $('#example').bootstrapTable('refresh');
-                    //console.log("成功" + data);
-                }
-            });
-        }
     </script>
 }

@@ -141,4 +141,30 @@ namespace WFS.Models
         [MaxLength(100)]
         public string FinFileId { get; set; }
     }
+
+    /// <summary>
+    /// 系统参数表
+    /// 存储系统使用的参数，如：总帐余额， 网站名称等
+    /// </summary>
+    public class MetaValues
+    {
+        /// <summary>
+        /// 参数名称
+        /// </summary>
+        [MaxLength(30)]
+        [Key]
+        public string MetaID { get; set; }
+
+        /// <summary>
+        /// 参数值
+        /// </summary>
+        [MaxLength(200)]
+        public string Value { get; set; }
+
+        /// <summary>
+        /// 描述
+        /// </summary>
+        [MaxLength(500)]
+        public string Desription { get; set; }
+    }
 }

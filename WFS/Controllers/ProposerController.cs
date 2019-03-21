@@ -51,6 +51,16 @@ namespace WFS.Controllers
                     var form = db.Forms.FirstOrDefault(x => x.ID.Trim() == id.Trim());
                     if(form != null)
                     {
+                        //检查表单状态，如果状态已通过申请，返回提示
+                        if (form.Status > FormStatus.Passed)
+                        {
+                            return Json(new JsonResultModel()
+                            {
+                                success = false,
+                                message = "此表单不能再做此操作。"
+                            });
+                        }
+
                         var model = Mapper.Map<FormCreateModel>(form);
                         return View(model);
                     }else
@@ -107,6 +117,16 @@ namespace WFS.Controllers
                     }
                     else //如果ID存在，则修改用户
                     {
+                        //检查表单状态，如果状态已通过申请，返回提示
+                        if (form.Status > FormStatus.Passed)
+                        {
+                            return Json(new JsonResultModel()
+                            {
+                                success = false,
+                                message = "此表单不能再做此操作。"
+                            });
+                        }
+
                         //如果上传了附件，则删除旧附件，并更新新的文件名称及ID
                         if (!string.IsNullOrWhiteSpace(FileName))
                         {
