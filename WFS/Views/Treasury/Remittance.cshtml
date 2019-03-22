@@ -1,0 +1,21 @@
+﻿@model WFS.Models.FormEntity
+@{
+    ViewBag.Title = "转帐";
+}
+
+<form class="form-horizontal" method="post" enctype="multipart/form-data">
+    @Html.Partial("~/Views/_FormDetail.cshtml", Model)
+    @Html.HiddenFor(x=>x.ID)
+    <div class="form-group">
+        <label class="control-label col-md-2">转帐凭证</label>
+        <div class="col-md-10">
+            <input type="file" name="file" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" name="确认转帐" class="btn btn-primary" />
+        </div>
+    </div>
+</form>

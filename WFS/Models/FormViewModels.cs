@@ -48,6 +48,5 @@ namespace WFS.Models
         /// </summary>
         [MaxLength(100)]
         public string FileId { get; set; }
-        
     }
 }

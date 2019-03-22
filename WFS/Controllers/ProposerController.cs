@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using WFS.Helpers;
 using WFS.Models;
 
 namespace WFS.Controllers
@@ -90,7 +91,7 @@ namespace WFS.Controllers
                         FileName = Path.GetFileName(Request.Files[0].FileName);
 
                         //保存文件，并获得保存ID（包含文件后缀名）
-                        FileID = SaveFile(Request.Files[0]);
+                        FileID = FileHelper.SaveFile(Request.Files[0], Server);
                     }
 
                     form = db.Forms.FirstOrDefault(x => x.ID.Trim() == model.ID.Trim());
@@ -185,6 +186,15 @@ namespace WFS.Controllers
         }
         #endregion
 
+        #region 下载附件
+        public ActionResult DownLoad(string fid)
+        {
+            var filename = Path.Combine(Server.MapPath("~/Uploads/"), fid.ToString());
+            var ex = Path.GetExtension(filename);
+            return File(filename, "applicatioin/" + ex, fid);
+        }
+        #endregion
+
         #region 私有方法
         /// <summary>
         /// 获取一个表单编号
@@ -212,32 +222,7 @@ namespace WFS.Controllers
             }
         }
 
-        /// <summary>
-        /// 保存上传的附件
-        /// </summary>
-        /// <param name="file">文件流</param>
-        /// <returns>文件id</returns>
-        private string SaveFile(HttpPostedFileBase file)
-        {
-            var fid = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            var fullname = Path.Combine(Server.MapPath("~/Uploads/"), fid);
-            file.SaveAs(fullname);
-            return fid;
-        }
-
-        private bool DelFile(string FileID)
-        {
-            try
-            {
-                var fullname = Path.Combine(Server.MapPath("~/Uploads/"), FileID);
-                System.IO.File.Delete(fullname);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
+        
         #endregion
     }
 }

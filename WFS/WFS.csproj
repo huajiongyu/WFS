@@ -144,6 +144,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Helpers\MetaValueHelper.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\DbSet_Entities.cs" />
@@ -1065,6 +1066,9 @@
     <Content Include="Views\Assessor\Index.cshtml" />
     <Content Include="Views\Treasury\SetGeneralLedger.cshtml" />
     <Content Include="Views\Treasury\Appling.cshtml" />
+    <Content Include="Views\_FormDetail.cshtml" />
+    <Content Include="Views\Assessor\Detail.cshtml" />
+    <Content Include="Views\Treasury\Remittance.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

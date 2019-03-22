@@ -1,0 +1,67 @@
+﻿<!--
+    这是申请表单的详情视图
+    审核员查看的详情与财务查看的表单详情共用
+-->
+@using WFS.Models
+@model FormEntity
+
+<style>
+
+    /*
+        设定每行栏位的下方空出30px
+    */
+    ./*form-group{
+        padding-bottom:30px;
+    }*/
+
+    /*.form-group label:first-child{
+        text-align:right;
+    }*/
+</style>
+
+<div class="form-group">
+    <label class="control-label col-md-2">单号</label>
+    <div class="col-md-10">
+        @Html.HiddenFor(m => m.ID)
+        @if (Model != null)
+            {
+            <label class="control-label">@Model.ID</label>
+        }
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="control-label col-md-2">类型</label>
+    <div class="col-md-10">
+        @Html.EnumDropDownListFor(x => x.Type, new { @class = "form-control max-width-280", @readonly="readonly" })
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="control-label col-md-2">标题</label>
+    <div class="col-md-10">
+        <label class="control-label">@Model.Title</label>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="control-label col-md-2">内容</label>
+    <div class="col-md-10">
+        <label class="control-label">@Model.Content</label>
+        
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="control-label col-md-2">金额</label>
+    <div class="col-md-10">
+        <label class="control-label">@Model.Cost</label>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="control-label col-md-2">附件</label>
+    <div class="col-md-10">
+        <a href="@(Url.Action("DownLoad", "Proposer", new { fid = Model.FileId }))" target="_blank">@Model.FileName</a>
+    </div>
+</div>

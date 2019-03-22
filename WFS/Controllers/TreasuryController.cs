@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using WFS.Models;
 using WFS.Helpers;
+using System.IO;
 
 namespace WFS.Controllers
 {
@@ -162,6 +163,67 @@ namespace WFS.Controllers
                     .OrderByDescending(x => x.CreateTime)
                     .ToList();
                 return Json(rows);
+            }
+        }
+
+        public ActionResult Remittance(string id)
+        {
+            using (WFSContext db = new WFSContext())
+            {
+                //此处不考虑参数错误以及表单不存在的情况
+                var rows = db.Forms
+                    .FirstOrDefault(x => x.ID == id);
+                return View(rows);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Remittance(string id, HttpPostedFileBase file)
+        {
+            using (WFSContext db = new WFSContext())
+            {
+                //此处不考虑参数错误以及表单不存在的情况
+                var form = db.Forms.FirstOrDefault(x => x.ID == id);
+
+                if(form.Status != FormStatus.Passed)
+                {
+                    return Content("此申请尚未审核通过或已转帐，操作已取消。");
+                }
+
+                //修改状态
+                form.Status = FormStatus.TransactionComplete;
+
+                //保存附件
+                //附件名称
+                var FileName = string.Empty;
+                var FileID = string.Empty;
+
+                //判断是否有上传文件
+                if (Request.Files.Count > 0)
+                {
+                    //获取文件名
+                    FileName = Path.GetFileName(Request.Files[0].FileName);
+
+                    //保存文件，并获得保存ID（包含文件后缀名）
+                    FileID = FileHelper.SaveFile(Request.Files[0], Server);
+
+                    //保存文件名
+                    form.FinFileId = FileID;
+                    form.FinFileName = FileName;
+                }
+
+                //处理人
+                form.FinBy = "hua";//TODO
+
+                //处理时间
+                form.FinDate = DateTime.Now;
+
+                db.Entry<FormEntity>(form).State = System.Data.Entity.EntityState.Modified;
+
+                //保存到数据库
+                db.SaveChanges();
+
+                return RedirectToAction("Appling");
             }
         }
         #endregion

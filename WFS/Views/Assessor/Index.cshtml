@@ -50,7 +50,11 @@
                 toolbar: '#toolbar',
                 columns: [
                     {
-                        field: 'ID'
+                        field: 'ID',
+                        formatter: function (value, full, index) {
+                            var a = '<a target="_blank" href="@(Url.Action("Detail"))?id=' + value + '">' + value + '</a>';
+                            return a;
+                        }
                     },
                     {
                         field: 'Type',
@@ -71,7 +75,7 @@
                         field: 'FileName',//附件
                         formatter: function (value, full, index) {
                             if (!value) return '';
-                            var a = '<a target="_blank" href="@(Url.Content("~/UPloads"))' + full.FileId.trim() + '">' + value + '</a>';
+                            var a = '<a target="_blank" href="@(Url.Action("DownLoad", "Proposer"))?fid=' + full.FileId.trim() + '">' + value + '</a>';
                             return a;
                         }
                     }, {
@@ -91,7 +95,13 @@
                     }, {
                         field: 'Status',
                         formatter: function (value, full, index) {
-                            return StatusList[value];
+                            if (!full.PassDate) {
+                                return StatusList[value];
+                            }
+                            var reg = /\d+/g;
+                            var _t = full.PassDate.match(reg)[0];
+                            var date = new Date(parseInt(_t));
+                            return '审核通过<br/>' + date.format('yyyy-MM-dd');
                         }
                     }, {
                         field: 'FinDate',
@@ -100,7 +110,7 @@
                                 var reg = /\d+/g;
                                 var _t = value.match(reg)[0];
                                 var date = new Date(parseInt(_t));
-                                return '已转帐:' + date.format('yyyy-MM-dd');
+                                return '已转帐<br/>' + date.format('yyyy-MM-dd');
                             } else {
                                 return '';
                             }

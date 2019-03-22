@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -31,6 +32,14 @@ namespace WFS.Controllers
             }
         }
 
+        public ActionResult Detail(string id)
+        {
+            using (WFSContext db = new WFSContext())
+            {
+                var form = db.Forms.FirstOrDefault(x=>x.ID == id.Trim());
+                return View(form);
+            }
+        }
         #endregion
 
         #region 表单操作
@@ -132,5 +141,7 @@ namespace WFS.Controllers
             }
         }
         #endregion
+
+        
     }
 }
