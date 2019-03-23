@@ -10,10 +10,12 @@ using System.IO;
 
 namespace WFS.Controllers
 {
+    [Authorize(Roles = "Finance")]
     public class TreasuryController : Controller
     {
         #region 显示（查询）用户信息
         // GET: Treasury
+        
         public ActionResult Index()
         {
             return View();
@@ -188,6 +190,12 @@ namespace WFS.Controllers
                 if(form.Status != FormStatus.Passed)
                 {
                     return Content("此申请尚未审核通过或已转帐，操作已取消。");
+                }
+
+                var _GeneralLedger = MetaValueHelper.GetGeneralLedger();
+                if(_GeneralLedger < form.Cost)
+                {
+                    return Content("当前总帐余额不足，操作已取消。");
                 }
 
                 //修改状态

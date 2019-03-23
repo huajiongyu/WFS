@@ -74,7 +74,7 @@
                             <img class="nav-user-photo" src="~/Content/adver.png" alt="Photo" />
                             <span class="user-info">
                                 <small>欢迎,</small>
-                                Jason
+                                @Session["UserName"]
                             </span>
 
                             <i class="ace-icon fa fa-caret-down"></i>
@@ -91,7 +91,7 @@
                             <li class="divider"></li>
 
                             <li>
-                                <a href="#">
+                                <a href="@Url.Action("Logout", "Account")">
                                     <i class="ace-icon fa fa-power-off"></i>
                                     退出系统
                                 </a>
@@ -115,21 +115,6 @@
 
             <div class="sidebar-shortcuts" id="sidebar-shortcuts">
                 <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
-                    @*<button class="btn btn-success">
-                        <i class="ace-icon fa fa-signal"></i>
-                    </button>
-
-                    <button class="btn btn-info">
-                        <i class="ace-icon fa fa-pencil"></i>
-                    </button>
-
-                    <button class="btn btn-warning">
-                        <i class="ace-icon fa fa-users"></i>
-                    </button>
-
-                    <button class="btn btn-danger">
-                        <i class="ace-icon fa fa-cogs"></i>
-                    </button>*@
                     <span>主菜单</span>
                 </div>
 
@@ -145,103 +130,119 @@
             </div><!-- /.sidebar-shortcuts -->
 
             <ul class="nav nav-list">
-                <li class="active open">
-                    <a href="#" class="dropdown-toggle">
-                        <i class="menu-icon fa fa-desktop"></i>
-                        <span class="menu-text">
-                            财务专区
-                        </span>
+                <!--不同用户显示不同的菜单-->
+            @{ 
+                var cookies = Request.Cookies[FormsAuthentication.FormsCookieName];
+                var tickets = FormsAuthentication.Decrypt(cookies.Value);
+                var role = tickets.UserData;
+            }
+                <!--财务用户的菜单-->
+                @if (role == "Finance")
+                {
+                    <li class="active open">
+                        <a href="#" class="dropdown-toggle">
+                            <i class="menu-icon fa fa-desktop"></i>
+                            <span class="menu-text">
+                                财务专区
+                            </span>
 
-                        <b class="arrow fa fa-angle-down"></b>
-                    </a>
+                            <b class="arrow fa fa-angle-down"></b>
+                        </a>
 
-                    <b class="arrow"></b>
+                        <b class="arrow"></b>
 
-                    <ul class="submenu">
-                        <li class="active">
-                            <a href="@Url.Action("Index","Treasury")" class="">
-                                <i class="menu-icon fa fa-caret-right"></i>
-                                用户信息管理
-                                <b class="arrow fa fa-angle-down"></b>
-                            </a>
+                        <ul class="submenu">
+                            <li class="active">
+                                <a href="@Url.Action("Index","Treasury")" class="">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    用户信息管理
+                                    <b class="arrow fa fa-angle-down"></b>
+                                </a>
 
-                            <b class="arrow"></b>
+                                <b class="arrow"></b>
 
-                        </li>
+                            </li>
 
-                        <li class="">
-                            <a href="@Url.Action("Appling","Treasury")">
-                                <i class="menu-icon fa fa-caret-right"></i>
-                                经费管理
-                            </a>
+                            <li class="">
+                                <a href="@Url.Action("Appling","Treasury")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    经费管理
+                                </a>
 
-                            <b class="arrow"></b>
-                        </li>
+                                <b class="arrow"></b>
+                            </li>
 
-                        <li class="">
-                            <a href="@Url.Action("SetGeneralLedger","Treasury")">
-                                <i class="menu-icon fa fa-caret-right"></i>
-                                收入管理
-                            </a>
+                            <li class="">
+                                <a href="@Url.Action("SetGeneralLedger","Treasury")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    收入管理
+                                </a>
 
-                            <b class="arrow"></b>
-                        </li>
-                    </ul>
-                </li>
+                                <b class="arrow"></b>
+                            </li>
+                        </ul>
+                    </li>
+                }
 
-                <li class="">
-                    <a href="#" class="dropdown-toggle">
-                        <i class="menu-icon fa fa-tag"></i>
-                        <span class="menu-text"> 审批专区 </span>
+                <!--审批者用户的菜单-->
+                @if (role == "Assessor")
+                {
+                    <li class="">
+                        <a href="#" class="dropdown-toggle">
+                            <i class="menu-icon fa fa-tag"></i>
+                            <span class="menu-text"> 审批专区 </span>
 
-                        <b class="arrow fa fa-angle-down"></b>
-                    </a>
+                            <b class="arrow fa fa-angle-down"></b>
+                        </a>
 
-                    <b class="arrow"></b>
+                        <b class="arrow"></b>
 
-                    <ul class="submenu">
-                        <li class="">
-                            <a href="@Url.Action("Index", "Assessor")">
-                                <i class="menu-icon fa fa-caret-right"></i>
-                                申请管理
-                            </a>
+                        <ul class="submenu">
+                            <li class="">
+                                <a href="@Url.Action("Index", "Assessor")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    审核列表
+                                </a>
 
-                            <b class="arrow"></b>
-                        </li>
-                    </ul>
-                </li>
+                                <b class="arrow"></b>
+                            </li>
+                        </ul>
+                    </li>
+                }
+                <!--申请经费用户的菜单-->
+                @if (role == "User")
+                {
+                    <li class="">
+                        <a href="#" class="dropdown-toggle">
+                            <i class="menu-icon fa fa-tag"></i>
+                            <span class="menu-text"> 申请专区 </span>
 
-                <li class="">
-                    <a href="#" class="dropdown-toggle">
-                        <i class="menu-icon fa fa-tag"></i>
-                        <span class="menu-text"> 申请专区 </span>
+                            <b class="arrow fa fa-angle-down"></b>
+                        </a>
 
-                        <b class="arrow fa fa-angle-down"></b>
-                    </a>
+                        <b class="arrow"></b>
 
-                    <b class="arrow"></b>
+                        <ul class="submenu">
+                            <li class="">
+                                <a href="@Url.Action("Index","Proposer")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    费用申请管理
+                                </a>
 
-                    <ul class="submenu">
-                        <li class="">
-                            <a href="@Url.Action("Index","Proposer")">
-                                <i class="menu-icon fa fa-caret-right"></i>
-                                费用申请管理
-                            </a>
+                                <b class="arrow"></b>
+                            </li>
 
-                            <b class="arrow"></b>
-                        </li>
+                            <li class="">
+                                <a href="@Url.Action("Edit","Proposer")">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    填写申请
+                                </a>
 
-                        <li class="">
-                            <a href="@Url.Action("Edit","Proposer")">
-                                <i class="menu-icon fa fa-caret-right"></i>
-                                填写申请
-                            </a>
-
-                            <b class="arrow"></b>
-                        </li>
-                    </ul>
-                </li>
-
+                                <b class="arrow"></b>
+                            </li>
+                        </ul>
+                    </li>
+                }
             </ul><!-- /.nav-list -->
 
             <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
@@ -268,60 +269,69 @@
 
                 <div class="page-content">
                     @RenderBody()
-            </div><!-- /.page-content -->
-        </div>
-    </div><!-- /.main-content -->
+                </div><!-- /.page-content -->
+            </div>
+        </div><!-- /.main-content -->
 
-    <div class="footer">
-        <div class="footer-inner">
-            <div class="footer-content">
-                <span class="bigger-120">
-                    <span class="blue bolder">Ace</span>
-                    Application &copy; 2013-2014
-                </span>
+        <div class="footer">
+            <div class="footer-inner">
+                <div class="footer-content">
+                    <span class="bigger-120">
+                        <span class="blue bolder">Ace</span>
+                        Application &copy; 2013-2014
+                    </span>
 
-                &nbsp; &nbsp;
-                <span class="action-buttons">
-                    <a href="#">
-                        <i class="ace-icon fa fa-twitter-square light-blue bigger-150"></i>
-                    </a>
+                    &nbsp; &nbsp;
+                    <span class="action-buttons">
+                        <a href="#">
+                            <i class="ace-icon fa fa-twitter-square light-blue bigger-150"></i>
+                        </a>
 
-                    <a href="#">
-                        <i class="ace-icon fa fa-facebook-square text-primary bigger-150"></i>
-                    </a>
+                        <a href="#">
+                            <i class="ace-icon fa fa-facebook-square text-primary bigger-150"></i>
+                        </a>
 
-                    <a href="#">
-                        <i class="ace-icon fa fa-rss-square orange bigger-150"></i>
-                    </a>
-                </span>
+                        <a href="#">
+                            <i class="ace-icon fa fa-rss-square orange bigger-150"></i>
+                        </a>
+                    </span>
+                </div>
             </div>
         </div>
-    </div>
 
-    <a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
-        <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
-    </a>
-</div><!-- /.main-container -->
+        <a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
+            <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
+        </a>
+    </div><!-- /.main-container -->
 
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
     <script src="~/Scripts/ace-master/assets/js/ace.min.js"></script>
-<!--[if lte IE 9]>
-  <link rel="stylesheet" href="~/Scripts/Ace-master/assets/css/ace-ie.min.css" />
-<![endif]-->
-<!-- inline styles related to this page -->
-<!-- ace settings handler -->
-<script src="~/Scripts/Ace-master/assets/js/ace-extra.min.js"></script>
+    <!--[if lte IE 9]>
+      <link rel="stylesheet" href="~/Scripts/Ace-master/assets/css/ace-ie.min.css" />
+    <![endif]-->
+    <!-- inline styles related to this page -->
+    <!-- ace settings handler -->
+    <script src="~/Scripts/Ace-master/assets/js/ace-extra.min.js"></script>
 
-<!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
-<!--[if lte IE 8]>
-<script src="~/Scripts/Ace-master/assets/js/html5shiv.min.js"></script>
-<script src="~/Scripts/Ace-master/assets/js/respond.min.js"></script>
-<![endif]-->
+    <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
+    <!--[if lte IE 8]>
+    <script src="~/Scripts/Ace-master/assets/js/html5shiv.min.js"></script>
+    <script src="~/Scripts/Ace-master/assets/js/respond.min.js"></script>
+    <![endif]-->
     <script src="~/Scripts/bootstrap-table-master/dist/bootstrap-table.min.js"></script>
     <script src="~/Scripts/bootstrap-table-master/dist/locale/bootstrap-table-zh-CN.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
-@RenderSection("scripts", required: false)
+    @RenderSection("scripts", required: false)
+    <script>
+        //页面加载完成后，把当前网页对应的菜单设置为激活状态
+        //把菜单的父节点展开
+        $(function () {
+            var menu = $("a[href='" + location.pathname + "']");
+            menu.parent().addClass("active");
+            menu.parents('ul.submenu').parent('li').addClass("open");
+        });
+    </script>
 </body>
 </html>

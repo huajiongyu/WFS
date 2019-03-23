@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Data.Entity.Migrations;
 
 namespace WFS.Models
@@ -51,6 +52,48 @@ namespace WFS.Models
         /// 参数表
         /// </summary>
         public virtual DbSet<MetaValues> MetaValues { get; set; }
+
+        /// <summary>
+        /// 在创建模型的时候，创建3个用户
+        /// </summary>
+        /// <param name="modelBuilder"></param>
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            UserEntity u1 = new UserEntity()
+            {
+                ID = "user1",
+                Password = "123123",
+                CreateDate = DateTime.Now,
+                Disabled = false,
+                Name = "普通用户",
+                Role = RoleType.User
+            };
+
+            UserEntity u2 = new UserEntity()
+            {
+                ID = "user2",
+                Password = "123123",
+                CreateDate = DateTime.Now,
+                Disabled = false,
+                Name = "审批用户",
+                Role = RoleType.Assessor
+            };
+
+            UserEntity u3 = new UserEntity()
+            {
+                ID = "user3",
+                Password = "123123",
+                CreateDate = DateTime.Now,
+                Disabled = false,
+                Name = "财务帐户",
+                Role = RoleType.Finance
+            };
+
+            Users.AddRange(new UserEntity[] { u1, u2, u3 });
+            SaveChanges();
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
     
     internal sealed class Configuration : DbMigrationsConfiguration<WFSContext>
