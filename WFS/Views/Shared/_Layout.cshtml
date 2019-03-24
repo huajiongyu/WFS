@@ -46,7 +46,7 @@
     </script>
 </head>
 <body class="no-skin">
-    <div id="navbar" class="navbar navbar-default          ace-save-state">
+    <div id="navbar" class="navbar navbar-default ace-save-state">
         <div class="navbar-container ace-save-state" id="navbar-container">
             <button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
                 <span class="sr-only">Toggle sidebar</span>
@@ -59,10 +59,10 @@
             </button>
 
             <div class="navbar-header pull-left">
-                <a href="index.html" class="navbar-brand">
+                <a href="#" class="navbar-brand">
                     <small>
                         <i class="fa fa-leaf"></i>
-                        Ace Admin
+                        经费管理系统
                     </small>
                 </a>
             </div>
@@ -81,12 +81,12 @@
                         </a>
 
                         <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-                            <li>
+                            @*<li>
                                 <a href="profile.html">
                                     <i class="ace-icon fa fa-user"></i>
                                     我的资料
                                 </a>
-                            </li>
+                            </li>*@
 
                             <li class="divider"></li>
 
@@ -139,7 +139,7 @@
                 <!--财务用户的菜单-->
                 @if (role == "Finance")
                 {
-                    <li class="active open">
+                    <li class="">
                         <a href="#" class="dropdown-toggle">
                             <i class="menu-icon fa fa-desktop"></i>
                             <span class="menu-text">
@@ -152,7 +152,7 @@
                         <b class="arrow"></b>
 
                         <ul class="submenu">
-                            <li class="active">
+                            <li class="">
                                 <a href="@Url.Action("Index","Treasury")" class="">
                                     <i class="menu-icon fa fa-caret-right"></i>
                                     用户信息管理
@@ -173,9 +173,9 @@
                             </li>
 
                             <li class="">
-                                <a href="@Url.Action("SetGeneralLedger","Treasury")">
+                                <a href="@Url.Action("Setting","Treasury")">
                                     <i class="menu-icon fa fa-caret-right"></i>
-                                    收入管理
+                                    参数设置
                                 </a>
 
                                 <b class="arrow"></b>
@@ -252,7 +252,7 @@
 
         <div class="main-content">
             <div class="main-content-inner">
-                <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+                @*<div class="breadcrumbs ace-save-state" id="breadcrumbs">
                     <ul class="breadcrumb">
                         <li>
                             <i class="ace-icon fa fa-home home-icon"></i>
@@ -266,38 +266,12 @@
                     </ul><!-- /.breadcrumb -->
 
                 </div>
-
+                *@
                 <div class="page-content">
                     @RenderBody()
                 </div><!-- /.page-content -->
             </div>
         </div><!-- /.main-content -->
-
-        <div class="footer">
-            <div class="footer-inner">
-                <div class="footer-content">
-                    <span class="bigger-120">
-                        <span class="blue bolder">Ace</span>
-                        Application &copy; 2013-2014
-                    </span>
-
-                    &nbsp; &nbsp;
-                    <span class="action-buttons">
-                        <a href="#">
-                            <i class="ace-icon fa fa-twitter-square light-blue bigger-150"></i>
-                        </a>
-
-                        <a href="#">
-                            <i class="ace-icon fa fa-facebook-square text-primary bigger-150"></i>
-                        </a>
-
-                        <a href="#">
-                            <i class="ace-icon fa fa-rss-square orange bigger-150"></i>
-                        </a>
-                    </span>
-                </div>
-            </div>
-        </div>
 
         <a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
             <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>

@@ -30,7 +30,10 @@ namespace WFS.Controllers
         {
             using (WFSContext db = new WFSContext())
             {
-                var rows = db.Forms.OrderByDescending(x=>x.CreateTime).ToList();
+                var rows = db.Forms
+                    .Where(x=>x.CreateBy == User.Identity.Name)
+                    .OrderByDescending(x=>x.CreateTime)
+                    .ToList();
                 return Json(rows);
             }
         }
@@ -104,7 +107,7 @@ namespace WFS.Controllers
                         form.CreateTime = DateTime.Now;
 
                         //设置当前登录人为创建人
-                        form.CreateBy = "hua";
+                        form.CreateBy = User.Identity.Name;
 
                         //获取一个新的单号
                         form.ID = GetFormName();

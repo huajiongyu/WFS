@@ -23,6 +23,8 @@ namespace WFS
                 x.CreateMap<UserEntity, UserViewModel>();
                 x.CreateMap<FormCreateModel, FormEntity>();
                 x.CreateMap<FormEntity, FormCreateModel>();
+                x.CreateMap<SettingViewModel, MailSettingModel>();
+                x.CreateMap<MailSettingModel, SettingViewModel>();
             });
         }
     }

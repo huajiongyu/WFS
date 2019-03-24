@@ -158,7 +158,7 @@ namespace WFS.Models
         /// <summary>
         /// 参数值
         /// </summary>
-        [MaxLength(200)]
+        [MaxLength(2000)]
         public string Value { get; set; }
 
         /// <summary>

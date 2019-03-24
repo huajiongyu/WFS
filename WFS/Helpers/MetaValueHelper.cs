@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using WFS.Models;
+using Newtonsoft.Json;
 
 namespace WFS.Helpers
 {
@@ -13,6 +14,7 @@ namespace WFS.Helpers
     public class MetaValueHelper
     {
         private const string GeneralLedger = "GeneralLedger";
+        private const string MailSetting = "MailSetting";
 
         #region 总帐
 
@@ -126,6 +128,56 @@ namespace WFS.Helpers
             }
         }
         #endregion
+
+        #region 邮件参数
+
+        /// <summary>
+        /// 设置邮件参数
+        /// 把模型序列化成json字符串存到数据库
+        /// </summary>
+        /// <param name="Setting"></param>
+        /// <returns></returns>
+        public static bool SetMailMeta(MailSettingModel Setting)
+        {
+            using (var db = new WFSContext())
+            {
+                var SettingJsonString =  JsonConvert.SerializeObject(Setting);
+                var value = db.MetaValues.FirstOrDefault(x => x.MetaID == MailSetting);
+                if (value == null)//如果未存在，就创建
+                {
+                    value = InitMeta(MailSetting, SettingJsonString, "邮箱设置参数，请勿手动修改");
+                    db.MetaValues.Add(value);
+                }
+                else
+                {//如果存在就直接修改数据
+                    value.Value = SettingJsonString;
+                }
+                db.SaveChanges();
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// 读取邮件参数
+        /// </summary>
+        /// <returns></returns>
+        public static MailSettingModel GetMailSetting()
+        {
+            using (var db = new WFSContext())
+            {
+                var value = db.MetaValues.FirstOrDefault(x => x.MetaID == MailSetting);
+                if (value == null)//如果未存在
+                {
+                    return null;
+                }else
+                {
+                    var Setting = JsonConvert.DeserializeObject<MailSettingModel>(value.Value);
+                    return Setting;
+                }
+            }
+        }
+        #endregion
+
         /// <summary>
         /// 创建参数
         /// </summary>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using WFS.Helpers;
 using WFS.Models;
 
 namespace WFS.Controllers
@@ -59,7 +60,7 @@ namespace WFS.Controllers
                         return RedirectToAction("Index", "Assessor");
                         break;
                     case RoleType.Finance:
-                        return RedirectToAction("Index", "Treasury");
+                        return RedirectToAction("Appling", "Treasury");
                         break;
                     default:
                         return RedirectToAction("Index", "Proposer");

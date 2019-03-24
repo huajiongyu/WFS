@@ -145,12 +145,15 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\FileHelper.cs" />
+    <Compile Include="Helpers\MailHelpers.cs" />
     <Compile Include="Helpers\MetaValueHelper.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\DbSet_Entities.cs" />
     <Compile Include="Models\Enumerations.cs" />
     <Compile Include="Models\FormViewModels.cs" />
     <Compile Include="Models\JsonResultModel.cs" />
+    <Compile Include="Models\MailMetaSetModel.cs" />
+    <Compile Include="Models\SettingViewModel.cs" />
     <Compile Include="Models\UserViewModels.cs" />
     <Compile Include="Models\WFSContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -1064,7 +1067,7 @@
     <Content Include="Views\Treasury\Index.cshtml" />
     <Content Include="Views\Treasury\Edit.cshtml" />
     <Content Include="Views\Assessor\Index.cshtml" />
-    <Content Include="Views\Treasury\SetGeneralLedger.cshtml" />
+    <Content Include="Views\Treasury\Setting.cshtml" />
     <Content Include="Views\Treasury\Appling.cshtml" />
     <Content Include="Views\_FormDetail.cshtml" />
     <Content Include="Views\Assessor\Detail.cshtml" />
