@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -29,22 +30,24 @@ namespace WFS.Controllers
         /// <param name="RememberMe"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Login(string id, string pwd, bool RememberMe = false)
+        public ActionResult Login(LoginModel model)
         {
             using (var db = new WFSContext())
             {
                 //从数据库查找用户
-                var user = db.Users.FirstOrDefault(x=>x.ID.Trim().Equals(id.Trim(), StringComparison.OrdinalIgnoreCase)
-                && x.Password.Trim().Equals(pwd.Trim(), StringComparison.OrdinalIgnoreCase));
+                var user = db.Users.FirstOrDefault(x=>x.ID.Trim().Equals(model.id.Trim(), StringComparison.OrdinalIgnoreCase)
+                && x.Password.Trim().Equals(model.pwd.Trim(), StringComparison.OrdinalIgnoreCase));
 
                 //如果没找到到用户
                 if(user == null)
                 {
+                    ViewBag.id = model.id;
+                    ViewBag.Msg = "密码不正确";
                     return View();
                 }
 
-                string userRoles = user.Role.ToString(); //调用UserToRole方法来获取role字符串 
-                FormsAuthenticationTicket Ticket = new FormsAuthenticationTicket(1, user.ID.Trim(), DateTime.Now, DateTime.Now.AddMinutes(30), RememberMe, userRoles, "/"); //建立身份验证票对象 
+                string userRoles = user.Role.ToString(); 
+                FormsAuthenticationTicket Ticket = new FormsAuthenticationTicket(1, user.ID.Trim(), DateTime.Now, DateTime.Now.AddMinutes(30), model.RememberMe, userRoles, "/"); //建立身份验证票对象 
                 string HashTicket = FormsAuthentication.Encrypt(Ticket); //加密序列化验证票为字符串 
                 HttpCookie UserCookie = new HttpCookie(FormsAuthentication.FormsCookieName, HashTicket);
                 //生成Cookie 
@@ -80,5 +83,13 @@ namespace WFS.Controllers
             Session["UserName"] = null;
             return RedirectToAction("Login");
         }
+    }
+
+    public class LoginModel
+    {
+        [Required]
+        public string id { get; set; }
+        public string pwd{ get; set; }
+        public bool RememberMe { get; set; } = false;
     }
 }

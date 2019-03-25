@@ -114,6 +114,10 @@
                     }, {
                         field: 'ID',
                         formatter: function (value, full, index) {
+                            if (full.Status != 1) {
+                                return '';
+                            }
+
                             var op = [
                                 "<a class='btn btn-sm btn-primary' href=\"@(Url.Action("Edit"))?ID=" + value + "\">修改</a>",
                                 "&nbsp;",

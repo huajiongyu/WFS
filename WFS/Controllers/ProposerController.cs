@@ -11,6 +11,7 @@ using WFS.Models;
 
 namespace WFS.Controllers
 {
+    [Authorize]
     public class ProposerController : Controller
     {
         #region 显示（查询）
@@ -88,7 +89,7 @@ namespace WFS.Controllers
                     var FileID = string.Empty;
 
                     //判断是否有上传文件
-                    if(Request.Files.Count > 0)
+                    if(Request.Files.Count > 0 && Request.Files[0].ContentLength > 0)
                     {
                         //获取文件名
                         FileName = Path.GetFileName(Request.Files[0].FileName);

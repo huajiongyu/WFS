@@ -8,6 +8,7 @@ using WFS.Models;
 
 namespace WFS.Controllers
 {
+    [Authorize]
     public class AssessorController : Controller
     {
         #region 显示（查询）
