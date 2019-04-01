@@ -30,7 +30,8 @@ namespace WFS.Helpers
                 var value = db.MetaValues.FirstOrDefault(x => x.MetaID == GeneralLedger);
                 if (value == null)//如果未存在，就创建
                 {
-                    value = InitMeta("GeneralLedger", income.ToString(), "总帐余额");
+                    //value = InitMeta("GeneralLedger", income.ToString(), "总帐余额");
+                    value = InitMeta("GeneralLedger", "20000000", "总帐余额");
                     db.MetaValues.Add(value);
                 }
                 else

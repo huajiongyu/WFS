@@ -19,6 +19,10 @@ namespace WFS.Controllers
         /// <returns></returns>
         public ActionResult Login()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                Console.WriteLine("123");
+            }
             return View();
         }
 
@@ -42,7 +46,12 @@ namespace WFS.Controllers
                 if(user == null)
                 {
                     ViewBag.id = model.id;
-                    ViewBag.Msg = "密码不正确";
+                    ViewBag.Msg = "密码不正确。";
+                    return View();
+                }else if (user.Disabled == true)
+                {
+                    ViewBag.id = model.id;
+                    ViewBag.Msg = "此帐号已被停用。请与财务或管理员联系。";
                     return View();
                 }
 

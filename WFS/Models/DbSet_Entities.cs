@@ -31,6 +31,43 @@ namespace WFS.Models
 
         [Required]
         public RoleType Role { get; set; }
+
+        /// <summary>
+        /// 银行名称
+        /// </summary>
+        [MaxLength(50)]
+        public string BankName { get; set; }
+
+        /// <summary>
+        /// 开户省份
+        /// </summary>
+        [MaxLength(50)]
+        public string BankProvice { get; set; }
+
+        /// <summary>
+        /// 开户城市
+        /// </summary>
+        [MaxLength(50)]
+        public string BankCity { get; set; }
+
+        /// <summary>
+        /// 开户城市
+        /// </summary>
+        [MaxLength(50)]
+        public string BankCity2 { get; set; }
+
+        /// <summary>
+        /// 开户支行
+        /// </summary>
+        [MaxLength(50)]
+        public string BankSubName { get; set; }
+
+        /// <summary>
+        /// 银行帐号
+        /// </summary>
+        [MaxLength(60)]
+        public string BankAccount { get; set; }
+
         public bool? Disabled { get; set; }
         public DateTime CreateDate { get; set; }
     }
@@ -166,5 +203,14 @@ namespace WFS.Models
         /// </summary>
         [MaxLength(500)]
         public string Desription { get; set; }
+    }
+
+    public class Bank
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [MaxLength(50)]
+        public string Name { get; set; }
     }
 }

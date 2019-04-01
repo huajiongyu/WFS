@@ -65,6 +65,47 @@
                 </div>
             </div>
         </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">开户银行：</label>
+            <div class="col-md-3">
+                @Html.DropDownListFor(x => x.BankName, new List<SelectListItem>(),new { @class = "form-control", placeholder = "密码", autocomplete = "off", data_value = Model.BankName })
+                @Html.ValidationMessageFor(m => m.BankName)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">开户支行：</label>
+            <div class="col-md-2">
+                @Html.DropDownListFor(x => x.BankProvice, new List<SelectListItem>(), new { @class = "form-control", autocomplete = "off", data_value = Model.BankProvice})
+                @Html.ValidationMessageFor(m => m.BankProvice)
+            </div>
+            <div class="col-md-2">
+                @Html.DropDownListFor(x => x.BankCity, new List<SelectListItem>(), new { @class = "form-control", autocomplete = "off", data_value = Model.BankCity })
+                @Html.ValidationMessageFor(m => m.BankCity)
+            </div>
+            <div class="col-md-2">
+                @Html.DropDownListFor(x => x.BankCity2, new List<SelectListItem>(), new { @class = "form-control", autocomplete = "off", data_value = Model.BankCity2 })
+                @Html.ValidationMessageFor(m => m.BankCity2)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">开行支行：</label>
+            <div class="col-md-8">
+                @Html.EditorFor(x => x.BankSubName, new { @class = "form-control", placeholder = "开户支行名称", autocomplete = "off" })
+                @Html.ValidationMessageFor(m => m.BankSubName)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">银行帐号：</label>
+            <div class="col-md-8">
+                @Html.EditorFor(x => x.BankAccount, new { @class = "form-control", placeholder = "银行帐号", autocomplete = "off" })
+                @Html.ValidationMessageFor(m => m.BankAccount)
+            </div>
+        </div>
+
         <div class="form-group">
             <label class="control-label col-md-3">密码：</label>
             <div class="col-md-8">
@@ -90,3 +131,7 @@
 
     </div>
 </form>
+@section scripts{
+    <script src="~/Scripts/City.js"></script>
+<script src="~/Scripts/BankSet.js"></script>
+}

@@ -18,7 +18,7 @@
     <AssemblyName>WFS</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
-    <UseIISExpress>true</UseIISExpress>
+    <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -144,6 +144,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\BankHelper.cs" />
     <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Helpers\MailHelpers.cs" />
     <Compile Include="Helpers\MetaValueHelper.cs" />
@@ -415,6 +416,7 @@
     <Content Include="Scripts\AdminLTE-master\js\demo.js" />
     <Content Include="Scripts\AdminLTE-master\js\pages\dashboard.js" />
     <Content Include="Scripts\AdminLTE-master\js\pages\dashboard2.js" />
+    <Content Include="Scripts\BankSet.js" />
     <Content Include="Scripts\bootstrap-datetimepicker-master\css\bootstrap-datetimepicker.css" />
     <Content Include="Scripts\bootstrap-datetimepicker-master\css\bootstrap-datetimepicker.min.css" />
     <Content Include="Scripts\bootstrap-datetimepicker-master\Gruntfile.js" />
@@ -1034,6 +1036,7 @@
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\City.js" />
     <Content Include="Scripts\icheck.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -1105,7 +1108,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>7571</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:7571/</IISUrl>
+          <IISUrl>http://localhost/WFS</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

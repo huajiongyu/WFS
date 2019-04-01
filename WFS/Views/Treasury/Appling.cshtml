@@ -97,7 +97,7 @@
                             var reg = /\d+/g;
                             var _t = full.PassDate.match(reg)[0];
                             var date = new Date(parseInt(_t));
-                            return '审核通过<br/>' + date.format('yyyy-MM-dd');
+                            return StatusList[value] + '<br/>' + date.format('yyyy-MM-dd');
                         }
                     }, {
                         field: 'FinDate',

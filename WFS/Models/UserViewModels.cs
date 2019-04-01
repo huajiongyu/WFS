@@ -20,6 +20,42 @@ namespace WFS.Models
         [EmailAddress]
         public string EMail { get; set; }
 
+        /// <summary>
+        /// 银行名称
+        /// </summary>
+        [MaxLength(50)]
+        public string BankName { get; set; }
+
+        /// <summary>
+        /// 开户省份
+        /// </summary>
+        [MaxLength(50)]
+        public string BankProvice { get; set; }
+
+        /// <summary>
+        /// 开户城市
+        /// </summary>
+        [MaxLength(50)]
+        public string BankCity { get; set; }
+
+        /// <summary>
+        /// 开户城市
+        /// </summary>
+        [MaxLength(50)]
+        public string BankCity2 { get; set; }
+
+        /// <summary>
+        /// 开户支行
+        /// </summary>
+        [MaxLength(50)]
+        public string BankSubName { get; set; }
+
+        /// <summary>
+        /// 银行帐号
+        /// </summary>
+        [MaxLength(60)]
+        public string BankAccount { get; set; }
+
         [MaxLength(50)]
         [MinLength(6)]
         [Required]

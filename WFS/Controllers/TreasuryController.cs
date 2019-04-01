@@ -82,6 +82,12 @@ namespace WFS.Controllers
                         user.Disabled = model.Disabled;
                         user.EMail = model.EMail;
                         user.Role = model.Role;
+                        user.BankName = model.BankName;
+                        user.BankProvice = model.BankProvice;
+                        user.BankCity = model.BankCity;
+                        user.BankCity2 = model.BankCity2;
+                        user.BankSubName = model.BankSubName;
+                        user.BankAccount = model.BankAccount;
 
                         db.Entry<UserEntity>(user).State = System.Data.Entity.EntityState.Modified;
                     }
@@ -126,7 +132,7 @@ namespace WFS.Controllers
         }
         #endregion
 
-        #region 设置
+        #region 参数设置
         /// <summary>
         /// 设置系统参数页面
         /// </summary>
@@ -157,7 +163,7 @@ namespace WFS.Controllers
         {
             if (ModelState.IsValid)
             {
-                MetaValueHelper.SetGeneralLedger(model.GeneralLedger);
+                //MetaValueHelper.SetGeneralLedger(model.GeneralLedger);
                 var MailSetting = AutoMapper.Mapper.Map<MailSettingModel>(model);
                 MetaValueHelper.SetMailMeta(MailSetting);
             }

@@ -13,7 +13,7 @@ namespace WFS.Models
         /// 总帐余额
         /// </summary>
         [Range(0, float.MaxValue)]
-        [Required]
+        //[Required]
         public Decimal GeneralLedger { get; set; }
 
         /// <summary>

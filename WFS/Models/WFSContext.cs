@@ -53,6 +53,7 @@ namespace WFS.Models
         /// </summary>
         public virtual DbSet<MetaValues> MetaValues { get; set; }
 
+        public virtual DbSet<Bank> Banks { get; set; }
         /// <summary>
         /// 在创建模型的时候，创建3个用户
         /// </summary>
