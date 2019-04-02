@@ -1633,6 +1633,8 @@ $(function () {
 
         _city.find('option').remove();
         var _p = this.value;
+        if (!_p || _p === '')
+            return;
         var PObj = $.grep(provice, function (item) { return item.name === _p; });
         if (!PObj)
             return;
@@ -1651,8 +1653,10 @@ $(function () {
 
         _city1.find('option').remove();
         var _p = $("#BankProvice").val();
+        if (!_p || _p === '')
+            return;
         var PObj = $.grep(provice, function (item) { return item.name === _p; });
-        if (!PObj)
+        if (!PObj || PObj.length === 0)
             return;
 
         var _c = this.value;
