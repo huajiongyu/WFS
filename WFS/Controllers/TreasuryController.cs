@@ -46,7 +46,7 @@ namespace WFS.Controllers
 
             if (string.IsNullOrWhiteSpace(id))
             {
-                return View();
+                return View(new UserViewModel());
             }
             else
             {
@@ -174,6 +174,8 @@ namespace WFS.Controllers
         #region 转帐
         public ActionResult Appling()
         {
+            decimal GeneralLedger = MetaValueHelper.GetGeneralLedger();
+            ViewBag.GeneralLedger = GeneralLedger;
             return View();
         }
 

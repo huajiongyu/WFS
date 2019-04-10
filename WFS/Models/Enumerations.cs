@@ -29,22 +29,29 @@ namespace WFS.Models
         Return = 0,
 
         /// <summary>
+        /// 校长已审批
+        /// </summary>
+        [Display(Name = "校长已审批")]
+        Passed2 = 1,
+
+        /// <summary>
         /// 审批中
         /// </summary>
         [Display(Name = "审批中")]
-        Appling = 1,
+        Appling = 2,
 
         /// <summary>
         /// 审批通过
         /// </summary>
         [Display(Name = "审批通过")]
-        Passed = 2,
+        Passed = 3,
 
         /// <summary>
         /// 转帐完成
         /// </summary>
         [Display(Name = "转帐完成")]
-        TransactionComplete = 3
+        TransactionComplete = 4
+
     }
 
     public enum RoleType
@@ -65,6 +72,9 @@ namespace WFS.Models
         /// 财务人员
         /// </summary>
         [Display(Name = "财务人员")]
-        Finance = 2
+        Finance = 2,
+
+        [Display(Name ="校长")]
+        Hearmaster = 3
     }
 }

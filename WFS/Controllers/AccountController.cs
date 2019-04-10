@@ -19,10 +19,6 @@ namespace WFS.Controllers
         /// <returns></returns>
         public ActionResult Login()
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                Console.WriteLine("123");
-            }
             return View();
         }
 

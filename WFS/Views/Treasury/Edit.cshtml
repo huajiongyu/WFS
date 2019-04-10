@@ -15,7 +15,7 @@
         <div class="form-group">
             <label class="control-label col-md-3">帐号：</label>
             <div class="col-md-8">
-                @if (Model == null)
+                @if (Model == null || string.IsNullOrWhiteSpace(Model.ID))
                 {
                     @Html.TextBoxFor(x => x.ID, new { @class = "form-control", placeholder = "帐号", autocomplete = "off" })
                     @Html.ValidationMessageFor(m => m.ID)
