@@ -29,17 +29,17 @@ namespace WFS.Models
         Return = 0,
 
         /// <summary>
-        /// 校长已审批
-        /// </summary>
-        [Display(Name = "校长已审批")]
-        Passed2 = 1,
-
-        /// <summary>
         /// 审批中
         /// </summary>
         [Display(Name = "审批中")]
-        Appling = 2,
+        Appling = 1,
 
+        /// <summary>
+        /// 校长已审批
+        /// </summary>
+        [Display(Name = "校长已审批")]
+        Passed2 = 2,
+        
         /// <summary>
         /// 审批通过
         /// </summary>

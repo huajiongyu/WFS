@@ -8,12 +8,7 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
     <!-- bootstrap & fontawesome -->
-    @*<link rel="stylesheet" href="assets/css/bootstrap.min.css" />*@
     <link href="~/Content/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" />
-
-    <!-- page specific plugin styles -->
-    <!-- text fonts -->
-    @*<link rel="stylesheet" href="assets/css/fonts.googleapis.com.css" />*@
 
     <!-- ace styles -->
     <link rel="stylesheet" href="~/Scripts/Ace-master/assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
@@ -46,6 +41,8 @@
     </script>
 </head>
 <body class="no-skin">
+
+    <!--1.航栏-->
     <div id="navbar" class="navbar navbar-default ace-save-state">
         <div class="navbar-container ace-save-state" id="navbar-container">
             <button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
@@ -105,14 +102,18 @@
 
     <div class="main-container ace-save-state" id="main-container">
         <script type="text/javascript">
+            //启动ace admin前端框架
+            //启动后， ace admin 的JS脚本会根据页面左边菜单生成展开与折叠，及其他页面操作。
             try { ace.settings.loadState('main-container') } catch (e) { }
         </script>
 
+        <!--2.左侧菜单栏-->
         <div id="sidebar" class="sidebar responsive ace-save-state">
             <script type="text/javascript">
                 try { ace.settings.loadState('sidebar') } catch (e) { }
             </script>
 
+            <!--2.1左侧菜单栏头部-->
             <div class="sidebar-shortcuts" id="sidebar-shortcuts">
                 <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
                     <span>主菜单</span>
@@ -129,6 +130,7 @@
                 </div>
             </div><!-- /.sidebar-shortcuts -->
 
+            <!--2.2左侧菜单栏-->
             <ul class="nav nav-list">
                 <!--不同用户显示不同的菜单-->
             @{ 
@@ -185,7 +187,7 @@
                 }
 
                 <!--审批者用户的菜单-->
-                @if (role == "Assessor")
+                @if (role == "Assessor" || role == "Hearmaster")
                 {
                     <li class="">
                         <a href="#" class="dropdown-toggle">
@@ -245,39 +247,28 @@
                 }
             </ul><!-- /.nav-list -->
 
+            <!--2.3最后一个图标-->
             <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
                 <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
             </div>
         </div>
 
+        <!--页面右侧主内容-->
         <div class="main-content">
             <div class="main-content-inner">
-                @*<div class="breadcrumbs ace-save-state" id="breadcrumbs">
-                    <ul class="breadcrumb">
-                        <li>
-                            <i class="ace-icon fa fa-home home-icon"></i>
-                            <a href="#">Home</a>
-                        </li>
-
-                        <li>
-                            <a href="#">More Pages</a>
-                        </li>
-                        <li class="active">Email Templates</li>
-                    </ul><!-- /.breadcrumb -->
-
-                </div>
-                *@
                 <div class="page-content">
+                <!--
+                    右侧主内容区占位符
+                    也就是说右侧的页面的内容是生成在这个位置
+                -->
                     @RenderBody()
                 </div><!-- /.page-content -->
             </div>
         </div><!-- /.main-content -->
 
-        @*<a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
-            <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
-        </a>*@
     </div><!-- /.main-container -->
 
+    <!--以下是JS加载-->
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     <script src="~/Scripts/ace-master/assets/js/ace.min.js"></script>

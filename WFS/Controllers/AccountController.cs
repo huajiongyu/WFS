@@ -65,9 +65,11 @@ namespace WFS.Controllers
                 switch (user.Role)
                 {
                     case RoleType.Assessor:
+                    case RoleType.Hearmaster:
                         return RedirectToAction("Index", "Assessor");
                         break;
                     case RoleType.Finance:
+                    
                         return RedirectToAction("Appling", "Treasury");
                         break;
                     default:

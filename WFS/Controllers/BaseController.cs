@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Filters;
+using System.Web.Security;
 
 namespace WFS.Controllers
 {
@@ -22,6 +23,12 @@ namespace WFS.Controllers
             base.OnAuthentication(filterContext);
         }
 
-        public string MyProperty { get; set; }
+        public string Role {
+            get {
+                var cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+                var ticket = FormsAuthentication.Decrypt(cookie.Value);
+                string role = ticket.UserData;
+                return role;
+            } }
     }
 }

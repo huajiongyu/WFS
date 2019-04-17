@@ -4,17 +4,19 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using WFS.Models;
 
 namespace WFS.Controllers
 {
     [Authorize]
-    public class AssessorController : Controller
+    public class AssessorController : BaseController
     {
         #region 显示（查询）
         // GET: Treasury
         public ActionResult Index()
         {
+            ViewBag.Role = Role;
             return View();
         }
 
@@ -28,7 +30,18 @@ namespace WFS.Controllers
         {
             using (WFSContext db = new WFSContext())
             {
-                var rows = db.Forms.OrderByDescending(x => x.CreateTime).ToList();
+                List<FormEntity> rows = new List<FormEntity>();
+                rows = db.Forms.OrderByDescending(x => x.CreateTime).ToList();
+                /*
+                if (Role == RoleType.Assessor.ToString())
+                {
+                    rows = db.Forms.Where(x=>!(x.Cost > 5000 && x.Status != FormStatus.Passed2)).OrderByDescending(x => x.CreateTime).ToList();
+                }
+                else if(Role == RoleType.Hearmaster.ToString())
+                {
+                    rows = db.Forms.Where(x=>!(x.Cost < 5000 && x.Status <= FormStatus.Passed2)).OrderByDescending(x => x.CreateTime).ToList();
+                }
+                */
                 return Json(rows);
             }
         }
@@ -37,7 +50,7 @@ namespace WFS.Controllers
         {
             using (WFSContext db = new WFSContext())
             {
-                var form = db.Forms.FirstOrDefault(x=>x.ID == id.Trim());
+                var form = db.Forms.FirstOrDefault(x => x.ID == id.Trim());
                 return View(form);
             }
         }
@@ -77,8 +90,18 @@ namespace WFS.Controllers
                         message = "此表单不能再做此操作。"
                     });
                 }
-
-                form.Status = FormStatus.Passed;
+                if (form.Status == FormStatus.Passed2)
+                {
+                    form.Status = FormStatus.Passed;
+                }
+                else if (form.Cost >= 5000 && form.Status == FormStatus.Appling)
+                {
+                    form.Status = FormStatus.Passed2;
+                }
+                else if (form.Status == FormStatus.Appling)
+                {
+                    form.Status = FormStatus.Passed;
+                }
                 form.PassDate = DateTime.Now; //通过时间
                 form.PasswordBy = "jason";//通过人
                 db.Entry<FormEntity>(form).State = System.Data.Entity.EntityState.Modified;
@@ -143,6 +166,6 @@ namespace WFS.Controllers
         }
         #endregion
 
-        
+
     }
 }

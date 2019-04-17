@@ -1,4 +1,4 @@
-﻿
+﻿@using WFS.Models;
 @{
     ViewBag.Title = "审批管理";
 }
@@ -30,15 +30,15 @@
         <!-- tbody是必须的 -->
     </table>
 </div>
-
+@ViewBag.Role
 @section scripts{
 
     <script>
-        var Role = '@';
+        var Role = '@ViewBag.Role';
         var table;
         var editFlag = false;
         var types = ["预算申请", "报销申请"];
-        var StatusList = ["审批驳回", "审批中", "审批通过", "转帐完成"];
+        var StatusList = ["审批驳回", "审批中", "审批中", "审批通过", "转帐完成"];
         $(function () {
             table = $('#example').bootstrapTable({
                 url: '@Url.Action("TableData")',
@@ -127,7 +127,9 @@
                             ].join('');
 
                             //只有表单状态在申请中才显示操作按钮
-                            if (full.Status == 1) {
+                            if((Role == "Assessor" && full.Status == @((int)FormStatus.Passed2) && full.Cost >= 5000)
+                                ||(Role == "Assessor" && full.Status == @((int)FormStatus.Appling) && full.Cost < 5000)
+                                ||(Role == "Hearmaster" && full.Status == @((int)FormStatus.Appling) && full.Cost >= 5000)){
                                 return op;
                             } else {
                                 return '';

@@ -99,7 +99,7 @@ namespace WFS.Controllers
                     }
 
                     form = db.Forms.FirstOrDefault(x => x.ID.Trim() == model.ID.Trim());
-                    if (form == null) // 如果不存在则创建新用户
+                    if (form == null) // 如果不存在则创建
                     {
                         //使用AutoMapper转换模型
                         form = Mapper.Map<FormEntity>(model);
@@ -120,7 +120,7 @@ namespace WFS.Controllers
                         //插入数据库
                         db.Forms.Add(form);
                     }
-                    else //如果ID存在，则修改用户
+                    else //如果存在，则修改
                     {
                         //检查表单状态，如果状态已通过申请，返回提示
                         if (form.Status > FormStatus.Passed)
@@ -139,8 +139,10 @@ namespace WFS.Controllers
                             form.FileId = FileID;
                         }
 
+                        form.Type = model.Type;
                         form.Title = model.Title;
                         form.Content = model.Content;
+                        form.Cost = model.Cost;
 
                         db.Entry<FormEntity>(form).State = System.Data.Entity.EntityState.Modified;
                     }
