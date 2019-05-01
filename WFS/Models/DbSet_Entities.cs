@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 
 /// <summary>
 /// 所有DB数据模型
@@ -70,6 +71,7 @@ namespace WFS.Models
 
         public bool? Disabled { get; set; }
         public DateTime CreateDate { get; set; }
+
     }
 
     /// <summary>
@@ -212,5 +214,30 @@ namespace WFS.Models
 
         [MaxLength(50)]
         public string Name { get; set; }
+    }
+
+    /// <summary>
+    /// 部门
+    /// </summary>
+    public class Deptment
+    {
+
+        /// <summary>
+        /// 部门编码
+        /// </summary>
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// 部门名称
+        /// </summary>
+        [MaxLength(50)]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// 部门主任
+        /// </summary>        
+        public virtual UserEntity Supervisor { get; set; }
+
+        public ICollection<UserEntity> Users { get; set; }
     }
 }

@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using WFS.Models;
 using WFS.Helpers;
-using System.IO;
+using WFS.Models;
 
 namespace WFS.Controllers
 {
@@ -19,7 +18,12 @@ namespace WFS.Controllers
 
         public ActionResult Index()
         {
-            return View();
+            using (WFSContext db = new WFSContext())
+            {
+                var Depts = db.Deptments.ToList();
+                return View(Depts);
+            }
+
         }
 
         /// <summary>
@@ -279,6 +283,45 @@ namespace WFS.Controllers
 
                 return RedirectToAction("Appling");
             }
+        }
+        #endregion
+
+
+        #region 部门
+        public ActionResult EditDept(Guid? id)
+        {
+
+            using (WFSContext db = new WFSContext())
+            {
+                Deptment model = db.Deptments.FirstOrDefault(x => x.Id == id);
+                if (model == null)
+                {
+                    return View("CreateDept");
+                }
+                else
+                {
+                    return View("EditDept", model);
+                }
+            }
+
+        }
+
+        [HttpPost]
+        public ActionResult EditDept(DeptViewCreateModel model)
+        {
+            using(WFSContext db = new WFSContext())
+            {
+                var user = db.Users.FirstOrDefault(x => x.ID == model.Surpersovire);
+                Deptment dept = new Deptment()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = model.Name,
+                    Supervisor = user
+                };
+                db.Deptments.Add(dept);
+                db.SaveChanges();
+            }
+            return RedirectToAction("Index");
         }
         #endregion
     }

@@ -19,31 +19,7 @@ namespace WFS
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            //创建Uploads文件夹
-            if (!Directory.Exists(Server.MapPath("~/Uploads")))
-            {
-                Directory.CreateDirectory(Server.MapPath("~/Uploads"));
-            }
-
-            /*
-             * 如果是用户表为空
-             * 就创建一个管理员
-             */
-            using(var db = new WFSContext())
-            {
-                if (!db.Users.Any())
-                {
-                    db.Users.Add(new UserEntity()
-                    {
-                        ID = "admin",
-                        CreateDate = DateTime.Now,
-                        Name = "财务",
-                        Password = "123123",
-                        Role = RoleType.Finance
-                    });
-                    db.SaveChanges();
-                }
-            }
+            
 
             AutoMapper.Mapper.Initialize(x => {
                 x.CreateMap<UserViewModel, UserEntity>();

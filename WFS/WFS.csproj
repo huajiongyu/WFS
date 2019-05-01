@@ -27,6 +27,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TypeScriptToolsVersion>1.8</TypeScriptToolsVersion>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -148,6 +149,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AssessorController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\InitController.cs" />
     <Compile Include="Controllers\ProposerController.cs" />
     <Compile Include="Controllers\TreasuryController.cs" />
     <Compile Include="Global.asax.cs">
@@ -159,6 +161,7 @@
     <Compile Include="Helpers\MetaValueHelper.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\DbSet_Entities.cs" />
+    <Compile Include="Models\DeptViewModels.cs" />
     <Compile Include="Models\Enumerations.cs" />
     <Compile Include="Models\FormViewModels.cs" />
     <Compile Include="Models\JsonResultModel.cs" />
@@ -1078,6 +1081,8 @@
     <Content Include="Views\Assessor\Detail.cshtml" />
     <Content Include="Views\Treasury\Remittance.cshtml" />
     <Content Include="Web.config" />
+    <Content Include="Views\Treasury\EditDept.cshtml" />
+    <Content Include="Views\Treasury\CreateDept.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1089,6 +1094,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Uploads\" />
     <Folder Include="Views\Base\" />
+    <Folder Include="Views\Init\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
