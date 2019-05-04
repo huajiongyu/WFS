@@ -68,6 +68,8 @@ namespace WFS.Models
         public RoleType Role { get; set; }
         public bool? Disabled { get; set; }
         public DateTime CreateDate { get; set; }
+
+        public Guid? DeptId { get; set; }
     }
 
     /// <summary>

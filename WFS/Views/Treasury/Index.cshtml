@@ -10,12 +10,13 @@
     }
 </style>
 <div class="row">
-    <div class="col-md-3 bg-blue">
+    <div class="col-md-3 bg-blue" style="padding-right:0px;padding-left:0px;">
         <div class="panel panel-default">
             <!-- Default panel contents -->
             <div class="panel-heading">
-                Depertments
+                部门列表
                 <a href="@(Url.Action("EditDept"))" class="btn btn-xs btn-link ">创建新部门</a>
+                <a href="javascript:;" class="btn btn-xs btn-link " onclick="ShowAllUsers()">所有用户</a>
             </div>
             <!--部门列表-->
             <ul class="list-group" id="dept-list">
@@ -30,7 +31,7 @@
             </ul>
         </div>
     </div>
-    <div class="col-md-9">
+    <div class="col-md-9" style="padding-left:0px;">
         <div id="toolbar">
             <div class="form-inline" role="form">
                 <div class="form-group">
@@ -57,18 +58,33 @@
     </div>
 </div>
 
-
 @section scripts{
-
     <script>
         var table;
         var editFlag = false;
-        var role = ["普通用户", "审核人员", "财务人员","校长"];
+        var role = ["普通用户", "审核人员", "财务人员", "校长"];
         $(function () {
             //部门->点击加载用户
-            $('#dept-list').on('click', '.list-group-item', function () {
-                console.log(this);
-            }).on('click', 'a.')
+            $('#dept-list').on('click', 'a.loadusers', function () {
+                //console.log(this);
+                var id = this.parentElement.getAttribute('data-id');
+                $("#example").bootstrapTable('refresh', { query: { DeptId: id } });
+            }).on('click', 'a.edit', function () {
+                //console.log("修改部门");
+                var id = this.parentElement.getAttribute('data-id');
+                window.location.href = "@(Url.Action("EditDept"))?id=" + id; 
+            }).on('click', 'a.delete', function () {
+                //console.log("删除部门");
+                var id = this.parentElement.getAttribute('data-id');
+                if (confirm("确定删除此部门?")) {
+                    $.get("@Url.Action("DeleteDept")?id=" + id, function (data, status) {
+                        alert(data.message);
+                        if (data.success) {
+                            window.location.reload();
+                        }
+                    });
+                }
+            });
 
             table = $('#example').bootstrapTable({
                 url:'@Url.Action("TableData")',
@@ -79,6 +95,10 @@
                 pagination: true,
                 checkboxHeader: true,
                 toolbar: '#toolbar',
+                queryParams: function queryParams(params) {
+                    params.DeptId = 8;
+                    return params;
+                },
                 columns: [
                     {
                         field:'ID'
@@ -147,6 +167,10 @@
                     //console.log("成功" + data);
                 }
             });
+        }
+
+        function ShowAllUsers() {
+            $("#example").bootstrapTable('refresh', { query: { DeptId: '' } });
         }
     </script>
 }

@@ -17,6 +17,6 @@ namespace WFS.Models
         public Guid? Id { get; set; }
 
         public string Name { get; set; }
-        public string Surpersovire { get; set; }
+        public string Supervisor { get; set; }
     }
 }

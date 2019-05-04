@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 /// <summary>
 /// 所有DB数据模型
@@ -71,6 +72,9 @@ namespace WFS.Models
 
         public bool? Disabled { get; set; }
         public DateTime CreateDate { get; set; }
+
+        [JsonIgnore]
+        public virtual Deptment Dept { get; set; }
 
     }
 
@@ -238,6 +242,8 @@ namespace WFS.Models
         /// </summary>        
         public virtual UserEntity Supervisor { get; set; }
 
+        [JsonIgnore]
         public ICollection<UserEntity> Users { get; set; }
     }
+
 }

@@ -71,6 +71,11 @@ namespace WFS.Models
         /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Deptment>()
+                .HasOptional(x => x.Supervisor);
+
+            modelBuilder.Entity<Deptment>().HasMany(x => x.Users)
+                .WithRequired(x => x.Dept);
             base.OnModelCreating(modelBuilder);
         }
     }

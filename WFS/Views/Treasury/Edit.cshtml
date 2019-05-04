@@ -11,7 +11,13 @@
         <h4 class="modal-title" id="myModalLabel">创建/修改用户信息</h4>
     </div>
     <div class="modal-body form-horizontal">
-
+        <div class="form-group">
+            <label class="control-label col-md-3">部门：</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(x => x.DeptId, (SelectList)ViewBag.Depts, new { @class = "form-control", placeholder = "部门", autocomplete = "off" })
+                @Html.ValidationMessageFor(m => m.DeptId)
+            </div>
+        </div>
         <div class="form-group">
             <label class="control-label col-md-3">帐号：</label>
             <div class="col-md-8">
@@ -55,11 +61,11 @@
                     <label>
                         @if (Model == null || (Model.Disabled ?? false) == false)
                         {
-                            <input type="checkbox" name="Disabled" value="true"/>
+                            <input type="checkbox" name="Disabled" value="true" />
                         }
                         else
                         {
-                            <input type="checkbox" name="Disabled" value="true" checked="checked"/>
+                            <input type="checkbox" name="Disabled" value="true" checked="checked" />
                         }
                     </label>
                 </div>
@@ -69,7 +75,7 @@
         <div class="form-group">
             <label class="control-label col-md-3">开户银行：</label>
             <div class="col-md-3">
-                @Html.DropDownListFor(x => x.BankName, new List<SelectListItem>(),new { @class = "form-control", placeholder = "密码", autocomplete = "off", data_value = Model.BankName })
+                @Html.DropDownListFor(x => x.BankName, new List<SelectListItem>(), new { @class = "form-control", placeholder = "密码", autocomplete = "off", data_value = Model.BankName })
                 @Html.ValidationMessageFor(m => m.BankName)
             </div>
         </div>
@@ -77,7 +83,7 @@
         <div class="form-group">
             <label class="control-label col-md-3">开户支行：</label>
             <div class="col-md-2">
-                @Html.DropDownListFor(x => x.BankProvice, new List<SelectListItem>(), new { @class = "form-control", autocomplete = "off", data_value = Model.BankProvice})
+                @Html.DropDownListFor(x => x.BankProvice, new List<SelectListItem>(), new { @class = "form-control", autocomplete = "off", data_value = Model.BankProvice })
                 @Html.ValidationMessageFor(m => m.BankProvice)
             </div>
             <div class="col-md-2">

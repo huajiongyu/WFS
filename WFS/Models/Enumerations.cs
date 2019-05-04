@@ -75,7 +75,13 @@ namespace WFS.Models
         Finance = 2,
 
         [Display(Name ="校长")]
-        Hearmaster = 3
+        Hearmaster = 3,
+
+        /// <summary>
+        /// 部门主管
+        /// </summary>
+        [Display(Name ="部门主管")]
+        Supervisor = 4
     }
 
 }

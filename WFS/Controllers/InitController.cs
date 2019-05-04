@@ -37,22 +37,29 @@ namespace WFS.Controllers
                     Password = "123123",
                     Role = RoleType.Finance
                 };
-                db.Users.Add(user);
-                db.SaveChanges();
+
 
                 var dept = new Deptment()
                 {
                     Id = Guid.NewGuid(),
                     Name = "财务部",
-                    Supervisor = user,
-                    Users = new List<UserEntity>()
-                    {
-                        user
-                    }
+                    //Supervisor = user,
+                    //Users = new List<UserEntity>()
+                    //{
+                    //    user
+                    //}
                 };
 
                 db.Deptments.Add(dept);
+                db.SaveChanges();
 
+                dept.Supervisor = user;
+                dept.Users = new List<UserEntity>()
+                {
+                    user
+                };
+                db.Users.Add(user);
+                db.Entry<Deptment>(dept).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
 
 

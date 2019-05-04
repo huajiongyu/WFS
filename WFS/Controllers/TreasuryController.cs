@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -14,13 +15,16 @@ namespace WFS.Controllers
     public class TreasuryController : Controller
     {
         #region 显示（查询）用户信息
-        // GET: Treasury
-
+        /// <summary>
+        /// 部门及用户管理页面
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             using (WFSContext db = new WFSContext())
             {
                 var Depts = db.Deptments.ToList();
+                var user = db.Users.Include("Dept").ToList();
                 return View(Depts);
             }
 
@@ -32,11 +36,22 @@ namespace WFS.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult TableData()
+        public ActionResult TableData(Guid? DeptId)
         {
             using (WFSContext db = new WFSContext())
             {
-                var rows = db.Users.ToList();
+                var rows = db.Users.Include("Dept")
+                    .Where(x=>DeptId == null || x.Dept.Id == DeptId)
+                    .Select(x => new
+                    {
+                        x.ID,
+                        x.Name,
+                        x.Role,
+                        x.CreateDate,
+                        x.Disabled,
+                        DeptName = x.Dept.Name
+                    })
+                    .ToList();
                 return Json(rows);
             }
         }
@@ -47,18 +62,25 @@ namespace WFS.Controllers
 
         public ActionResult Edit(string id)
         {
-
-            if (string.IsNullOrWhiteSpace(id))
+            using (var db = new WFSContext())
             {
-                return View(new UserViewModel());
-            }
-            else
-            {
-                using (var db = new WFSContext())
+                SelectList depts = new SelectList(db.Deptments.Select(x=>new
                 {
+                    x.Id,
+                    x.Name
+                }).ToList(), "id", "name");
+                ViewBag.Depts = depts;
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    return View(new UserViewModel());
+                }
+                else
+                {
+
                     var user = db.Users.FirstOrDefault(x => x.ID.Trim() == id.Trim());
                     var model = Mapper.Map<UserViewModel>(user);
                     model.PasswordConfirm = model.Password;
+
                     return View(model);
                 }
             }
@@ -72,11 +94,36 @@ namespace WFS.Controllers
                 UserEntity user;
                 using (WFSContext db = new WFSContext())
                 {
-                    user = db.Users.FirstOrDefault(x => x.ID.Trim() == model.ID.Trim());
+                    user = db.Users.Include("Dept").FirstOrDefault(x => x.ID.Trim() == model.ID.Trim());
+                    var dept = db.Deptments.Include("Users").FirstOrDefault(m => m.Id == model.DeptId);
+                    if(dept == null)
+                    {
+                        return JavaScript("alert('部门参数错误');window.history.go(-1);");
+                    }
                     if (user == null) // 如果不存在则创建新用户
                     {
                         user = Mapper.Map<UserEntity>(model);
                         user.CreateDate = DateTime.Now;
+
+                        //加入部门
+                        if(dept.Users == null)
+                        {
+                            dept.Users = new List<UserEntity>()
+                            {
+                                user
+                            };
+                        }
+                        else
+                        {
+                            dept.Users.Add(user);
+                        }
+
+                        //是否是部门主管
+                        if(model.Role == RoleType.Supervisor)
+                        {
+                            dept.Supervisor = user;
+                        }
+
                         db.Users.Add(user);
                     }
                     else //如果ID存在，则修改用户
@@ -92,6 +139,31 @@ namespace WFS.Controllers
                         user.BankCity2 = model.BankCity2;
                         user.BankSubName = model.BankSubName;
                         user.BankAccount = model.BankAccount;
+
+                        //是否是部门主管
+                        if (model.Role == RoleType.Supervisor)
+                        {
+                            dept.Supervisor = user;
+                        }
+
+                        //从旧部门移除
+                        if (user.Dept != null)
+                        {
+                            user.Dept.Users.Remove(user);
+                        }
+
+                        //加入部门
+                        if (dept.Users == null)
+                        {
+                            dept.Users = new List<UserEntity>()
+                            {
+                                user
+                            };
+                        }
+                        else
+                        {
+                            dept.Users.Add(user);
+                        }
 
                         db.Entry<UserEntity>(user).State = System.Data.Entity.EntityState.Modified;
                     }
@@ -176,6 +248,10 @@ namespace WFS.Controllers
         #endregion
 
         #region 转帐
+        /// <summary>
+        /// 转帐列表页面
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Appling()
         {
             decimal GeneralLedger = MetaValueHelper.GetGeneralLedger();
@@ -202,6 +278,11 @@ namespace WFS.Controllers
             }
         }
 
+        /// <summary>
+        /// 转帐页面
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Remittance(string id)
         {
             using (WFSContext db = new WFSContext())
@@ -213,6 +294,12 @@ namespace WFS.Controllers
             }
         }
 
+        /// <summary>
+        /// 转帐提交处理
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="file"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Remittance(string id, HttpPostedFileBase file)
         {
@@ -288,30 +375,49 @@ namespace WFS.Controllers
 
 
         #region 部门
+        /// <summary>
+        /// 部门编辑/创建页面
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult EditDept(Guid? id)
         {
 
             using (WFSContext db = new WFSContext())
             {
-                Deptment model = db.Deptments.FirstOrDefault(x => x.Id == id);
-                if (model == null)
+                var Users = db.Users.Select(x => new { x.ID, x.Name }).ToList();
+                SelectList UsersSelectList = new SelectList(Users, "ID", "Name");
+                ViewBag.UsersSelectList = UsersSelectList;
+                Deptment Dept = db.Deptments.FirstOrDefault(x => x.Id == id);
+                if (Dept == null)
                 {
                     return View("CreateDept");
                 }
                 else
                 {
+                    var model = new DeptViewCreateModel()
+                    {
+                        Id = Dept.Id,
+                        Name = Dept.Name.Trim(),
+                        Supervisor = Dept.Supervisor == null ? "" : Dept.Supervisor.ID
+                    };
                     return View("EditDept", model);
                 }
             }
 
         }
 
+        /// <summary>
+        /// 创建部门后台
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
-        public ActionResult EditDept(DeptViewCreateModel model)
+        public ActionResult CreateDept(DeptViewCreateModel model)
         {
-            using(WFSContext db = new WFSContext())
+            using (WFSContext db = new WFSContext())
             {
-                var user = db.Users.FirstOrDefault(x => x.ID == model.Surpersovire);
+                var user = db.Users.FirstOrDefault(x => x.ID == model.Supervisor);
                 Deptment dept = new Deptment()
                 {
                     Id = Guid.NewGuid(),
@@ -322,6 +428,55 @@ namespace WFS.Controllers
                 db.SaveChanges();
             }
             return RedirectToAction("Index");
+        }
+
+        /// <summary>
+        /// 编辑部门后台
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult EditDept(DeptViewCreateModel model)
+        {
+            using (WFSContext db = new WFSContext())
+            {
+                Deptment dept = db.Deptments.FirstOrDefault(x => x.Id == model.Id);
+                if (dept == null)
+                {
+                    return Content("参数错误");
+                }
+                var user = db.Users.FirstOrDefault(x => x.ID == model.Supervisor);
+                dept.Name = model.Name.Trim();
+                dept.Supervisor = user;
+
+                db.SaveChanges();
+            }
+            return RedirectToAction("Index");
+        }
+
+        /// <summary>
+        /// 删除部门
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult DeleteDept(Guid? id)
+        {
+            using (WFSContext db = new WFSContext())
+            {
+                var dept = db.Deptments.Include("Users").FirstOrDefault(x => x.Id == id);
+                if (dept == null)
+                {
+                    return Json(new { success = false, message = "没有找到部门" }, JsonRequestBehavior.AllowGet);
+                }
+                else if (dept.Users != null && dept.Users.Count > 0)
+                {
+                    return Json(new { success = false, message = "不能删除有人员的部门。" }, JsonRequestBehavior.AllowGet);
+                }
+
+                db.Deptments.Remove(dept);
+                db.SaveChanges();
+                return Json(new { success = true, message = "删除成功。" }, JsonRequestBehavior.AllowGet);
+            }
         }
         #endregion
     }
