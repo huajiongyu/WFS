@@ -271,7 +271,7 @@ namespace WFS.Controllers
             {
                 //只显示审批通过和已转帐的表单
                 var rows = db.Forms
-                    .Where(x => x.Status >= FormStatus.Passed)
+                    //.Where(x => x.Status >= FormStatus.Passed)
                     .OrderByDescending(x => x.CreateTime)
                     .ToList();
                 return Json(rows);
@@ -308,10 +308,10 @@ namespace WFS.Controllers
                 //此处不考虑参数错误以及表单不存在的情况
                 var form = db.Forms.FirstOrDefault(x => x.ID == id);
 
-                if (form.Status != FormStatus.Passed)
-                {
-                    return Content("此申请尚未审核通过或已转帐，操作已取消。");
-                }
+                //if (form.Status != FormStatus.Passed)
+                //{
+                //    return Content("此申请尚未审核通过或已转帐，操作已取消。");
+                //}
 
                 var _GeneralLedger = MetaValueHelper.GetGeneralLedger();
                 if (_GeneralLedger < form.Cost)
@@ -320,7 +320,7 @@ namespace WFS.Controllers
                 }
 
                 //修改状态
-                form.Status = FormStatus.TransactionComplete;
+                //form.Status = FormStatus.TransactionComplete;
 
                 //保存附件
                 //附件名称
@@ -342,10 +342,10 @@ namespace WFS.Controllers
                 }
 
                 //处理人
-                form.FinBy = User.Identity.Name;//TODO
+                //form.FinBy = User.Identity.Name;//TODO
 
-                //处理时间
-                form.FinDate = DateTime.Now;
+                ////处理时间
+                //form.FinDate = DateTime.Now;
 
                 db.Entry<FormEntity>(form).State = System.Data.Entity.EntityState.Modified;
 

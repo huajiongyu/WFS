@@ -8,6 +8,10 @@
     .list-group-item a+a{
         margin-left:5px;
     }
+
+    #dept-list li.active *{
+        color:white;
+    }
 </style>
 <div class="row">
     <div class="col-md-3 bg-blue" style="padding-right:0px;padding-left:0px;">
@@ -16,18 +20,21 @@
             <div class="panel-heading">
                 部门列表
                 <a href="@(Url.Action("EditDept"))" class="btn btn-xs btn-link ">创建新部门</a>
-                <a href="javascript:;" class="btn btn-xs btn-link " onclick="ShowAllUsers()">所有用户</a>
+                @*<a href="javascript:;" class="btn btn-xs btn-link " onclick="ShowAllUsers()">所有用户</a>*@
             </div>
             <!--部门列表-->
             <ul class="list-group" id="dept-list">
-                @foreach (Deptment dept in Model)
-                {
-                <li class="list-group-item" data-id="@dept.Id">
-                    <a href="javascript:;" class="btn btn-link loadusers">@dept.Name</a>
-                    <a href="javascript:;" class="pull-right btn btn-xs btn-warning edit">修改</a>
-                    <a href="javascript:;" class="pull-right btn btn-xs btn-danger delete">删除</a>
+                <li class="list-group-item active" data-id="">
+                    <a href="javascript:;" class="loadusers">所有部门</a>
                 </li>
-                }
+                
+                @foreach (Deptment dept in Model) {
+                <li class="list-group-item" data-id="@dept.Id">
+                    <a href="javascript:;" class="loadusers">@dept.Name</a>
+                    <a href="javascript:;" class="pull-right text-warning edit">修改</a>
+                    <a href="javascript:;" class="pull-right text-danger delete">删除</a>
+                </li>
+            }
             </ul>
         </div>
     </div>
@@ -67,6 +74,8 @@
             //部门->点击加载用户
             $('#dept-list').on('click', 'a.loadusers', function () {
                 //console.log(this);
+                $('#dept-list li').removeClass("active");
+                $(this).parents('li').addClass('active');
                 var id = this.parentElement.getAttribute('data-id');
                 $("#example").bootstrapTable('refresh', { query: { DeptId: id } });
             }).on('click', 'a.edit', function () {

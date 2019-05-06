@@ -157,10 +157,10 @@
     </Compile>
     <Compile Include="Helpers\BankHelper.cs" />
     <Compile Include="Helpers\FileHelper.cs" />
+    <Compile Include="Helpers\FormStrategy.cs" />
     <Compile Include="Helpers\MailHelpers.cs" />
     <Compile Include="Helpers\MetaValueHelper.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\Class1.cs" />
     <Compile Include="Models\DbSet_Entities.cs" />
     <Compile Include="Models\DeptViewModels.cs" />
     <Compile Include="Models\Enumerations.cs" />

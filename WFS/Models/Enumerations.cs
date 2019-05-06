@@ -35,23 +35,16 @@ namespace WFS.Models
         Appling = 1,
 
         /// <summary>
-        /// 校长已审批
+        /// 取消
         /// </summary>
-        [Display(Name = "校长已审批")]
-        Passed2 = 2,
-        
-        /// <summary>
-        /// 审批通过
-        /// </summary>
-        [Display(Name = "审批通过")]
-        Passed = 3,
+        [Display(Name = "取消")]
+        Calcel = 2,
 
         /// <summary>
-        /// 转帐完成
+        /// 完结
         /// </summary>
-        [Display(Name = "转帐完成")]
-        TransactionComplete = 4
-
+        [Display(Name = "完结")]
+        Done = 3
     }
 
     public enum RoleType
@@ -84,4 +77,39 @@ namespace WFS.Models
         Supervisor = 4
     }
 
+    /// <summary>
+    /// 表单流程
+    /// </summary>
+    public enum ProcessCode
+    {
+        /// <summary>
+        /// 创建表单
+        /// </summary>
+        [Display(Name ="已提交")]
+        L0 = 1,
+
+        /// <summary>
+        /// 主任审核
+        /// </summary>
+        [Display(Name = "主任审核")]
+        L10 = 10,
+
+        /// <summary>
+        /// 审核
+        /// </summary>
+        [Display(Name = "审核")]
+        L20 = 20,
+
+        /// <summary>
+        /// 校长审核
+        /// </summary>
+        [Display(Name = "校长审核")]
+        L30 = 30,
+
+        /// <summary>
+        /// 财务转帐
+        /// </summary>
+        [Display(Name = "财务转帐")]
+        L40 = 40
+    }
 }

@@ -62,7 +62,8 @@ namespace WFS.Controllers
         /// </summary>
         /// <param name="ID"></param>
         /// <returns></returns>
-        [HttpPost]
+        /*[HttpPost]
+        
         public ActionResult Pass(string ID)
         {
             using (WFSContext db = new WFSContext())
@@ -114,7 +115,7 @@ namespace WFS.Controllers
                 });
             }
         }
-
+        
         /// <summary>
         /// 退回表单
         /// </summary>
@@ -164,6 +165,7 @@ namespace WFS.Controllers
                 });
             }
         }
+*/
         #endregion
 
 

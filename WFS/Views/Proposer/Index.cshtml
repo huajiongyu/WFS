@@ -47,6 +47,13 @@
                 pagination: true,
                 checkboxHeader: true,
                 toolbar: '#toolbar',
+                detailView: true,//父子表
+                onExpandRow: function (index, row, $detail) {
+                    console.log(index);
+                    console.log(row);
+                    console.log($detail);
+                    //$detail
+                },
                 columns: [
                     {
                         field: 'ID',

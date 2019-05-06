@@ -65,6 +65,8 @@ namespace WFS.Models
         public virtual DbSet<Deptment> Deptments { get; set; }
 
 
+        public virtual DbSet<ProcessLog> ProcessLogs { get; set; }
+
         /// <summary>
         /// 
         /// </summary>

@@ -121,6 +121,11 @@ namespace WFS.Models
         public string ReturnRemark { get; set; }
 
         /// <summary>
+        /// 当前流程码
+        /// </summary>
+        public ProcessCode ProcessCode { get; set; }
+
+        /// <summary>
         /// 表单状态
         /// </summary>
         [Required]
@@ -132,33 +137,11 @@ namespace WFS.Models
         public DateTime CreateTime { get; set; }
 
         /// <summary>
-        /// 审批通过日期
-        /// </summary>
-        public DateTime? PassDate { get; set; }
-
-        /// <summary>
-        /// 转帐日期
-        /// </summary>
-        public DateTime? FinDate { get; set; }
-
-        /// <summary>
         /// 创建人
         /// </summary>
         [Required]
         [MaxLength(36)]
         public string CreateBy { get; set; }
-
-        /// <summary>
-        /// 审批人
-        /// </summary>
-        [MaxLength(36)]
-        public string PasswordBy { get; set; }
-
-        /// <summary>
-        /// 财务处理人员
-        /// </summary>
-        [MaxLength(36)]
-        public string FinBy { get; set; }
 
         /// <summary>
         /// 附件原文件名
@@ -183,6 +166,8 @@ namespace WFS.Models
         /// </summary>
         [MaxLength(100)]
         public string FinFileId { get; set; }
+
+        public virtual ICollection<ProcessLog> ProcessLog { get; set; }
     }
 
     /// <summary>
@@ -246,4 +231,49 @@ namespace WFS.Models
         public ICollection<UserEntity> Users { get; set; }
     }
 
+    /// <summary>
+    /// 表单流程记录
+    /// </summary>
+    public class ProcessLog
+    {
+        [Key]
+        [Required]
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// 表单编号
+        /// </summary>
+        [MaxLength(15)]
+        [Required]
+        public string FormId { get; set; }
+
+        /// <summary>
+        /// 处理流程
+        /// </summary>
+
+        public ProcessCode ProcessCode { get; set; }
+
+        /// <summary>
+        /// 表单状态
+        /// </summary>
+
+        public FormStatus status { get; set; }
+
+        /// <summary>
+        /// 驳回原因
+        /// </summary>
+
+        public string Remark { get; set; }
+
+        /// <summary>
+        /// 操作人
+        /// </summary>
+
+        public UserEntity CreateBy { get; set; }
+
+        /// <summary>
+        /// 操作时间
+        /// </summary>
+        public DateTime CreateDate { get; set; }
+    }
 }

@@ -31,7 +31,7 @@ namespace WFS.Controllers
         {
             using (WFSContext db = new WFSContext())
             {
-                var rows = db.Forms
+                var rows = db.Forms.Include("ProcessLog")
                     .Where(x=>x.CreateBy == User.Identity.Name)
                     .OrderByDescending(x=>x.CreateTime)
                     .ToList();
@@ -57,7 +57,7 @@ namespace WFS.Controllers
                     if(form != null)
                     {
                         //检查表单状态，如果状态已通过申请，返回提示
-                        if (form.Status > FormStatus.Passed)
+                        if (form.Status != FormStatus.Appling)
                         {
                             return Json(new JsonResultModel()
                             {
@@ -123,7 +123,7 @@ namespace WFS.Controllers
                     else //如果存在，则修改
                     {
                         //检查表单状态，如果状态已通过申请，返回提示
-                        if (form.Status > FormStatus.Passed)
+                        if (form.Status != FormStatus.Appling)
                         {
                             return Json(new JsonResultModel()
                             {
@@ -163,8 +163,7 @@ namespace WFS.Controllers
                 }
 
                 return JavaScript("alert('" + errinfo.ToString() + "')");
-            }
-            return View();
+            }            
         }
         #endregion
 
