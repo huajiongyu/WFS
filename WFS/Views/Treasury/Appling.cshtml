@@ -129,7 +129,7 @@
                             ].join('');
 
                             //只有表单状态在申请中才显示操作按钮
-                            if (full.Status == @((int)FormStatus.Passed)) {
+                            if (full.Status == @((int)FormStatus.Appling) || full.Status == @((int)FormStatus.Done)) {
                                 return op;
                             } else {
                                 return '';

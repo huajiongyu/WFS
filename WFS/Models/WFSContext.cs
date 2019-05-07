@@ -61,16 +61,18 @@ namespace WFS.Models
         /// <summary>
         /// 部门
         /// </summary>
-
         public virtual DbSet<Deptment> Deptments { get; set; }
 
-
+        /// <summary>
+        /// 表单审批流程高录
+        /// </summary>
         public virtual DbSet<ProcessLog> ProcessLogs { get; set; }
 
         /// <summary>
-        /// 
+        /// 设置表
         /// </summary>
-        /// <param name="modelBuilder"></param>
+        public virtual DbSet<Settings> Settings { get; set; }
+        
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Deptment>()

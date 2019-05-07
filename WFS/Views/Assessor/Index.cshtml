@@ -2,7 +2,6 @@
 @{
     ViewBag.Title = "审批管理";
 }
-
 <div id="toolbar">
     <div class="form-inline" role="form">
         <div class="form-group">
@@ -127,9 +126,7 @@
                             ].join('');
 
                             //只有表单状态在申请中才显示操作按钮
-                            if((Role == "Assessor" && full.Status == @((int)FormStatus.Passed2) && full.Cost >= 5000)
-                                ||(Role == "Assessor" && full.Status == @((int)FormStatus.Appling) && full.Cost < 5000)
-                                ||(Role == "Hearmaster" && full.Status == @((int)FormStatus.Appling) && full.Cost >= 5000)){
+                            if (full.Enable) {
                                 return op;
                             } else {
                                 return '';

@@ -155,11 +155,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\AccountHelper.cs" />
     <Compile Include="Helpers\BankHelper.cs" />
     <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Helpers\FormStrategy.cs" />
     <Compile Include="Helpers\MailHelpers.cs" />
     <Compile Include="Helpers\MetaValueHelper.cs" />
+    <Compile Include="Helpers\SettingHelper.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\DbSet_Entities.cs" />
     <Compile Include="Models\DeptViewModels.cs" />

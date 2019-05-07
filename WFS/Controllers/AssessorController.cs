@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using WFS.Models;
+using WFS.Helpers;
 
 namespace WFS.Controllers
 {
@@ -17,6 +18,7 @@ namespace WFS.Controllers
         public ActionResult Index()
         {
             ViewBag.Role = Role;
+            ViewBag.UserName = LoginUser.ID;
             return View();
         }
 
@@ -30,18 +32,31 @@ namespace WFS.Controllers
         {
             using (WFSContext db = new WFSContext())
             {
-                List<FormEntity> rows = new List<FormEntity>();
-                rows = db.Forms.OrderByDescending(x => x.CreateTime).ToList();
-                /*
-                if (Role == RoleType.Assessor.ToString())
+                List<FormCreateModel> rows = new List<FormCreateModel>();
+                var forms = db.Forms.OrderByDescending(x => x.CreateTime).ToList();
+                rows = AutoMapper.Mapper.Map<List<FormCreateModel>>(forms);
+
+                ProcessCode toCode = ProcessCode.L0;
+                switch (LoginUser.Role)
                 {
-                    rows = db.Forms.Where(x=>!(x.Cost > 5000 && x.Status != FormStatus.Passed2)).OrderByDescending(x => x.CreateTime).ToList();
+                    case RoleType.Assessor:
+                        toCode = ProcessCode.L20;
+                        break;
+                    case RoleType.Finance:
+                        toCode = ProcessCode.L40;
+                        break;
+                    case RoleType.Hearmaster:
+                        toCode = ProcessCode.L30;
+                        break;
+                    case RoleType.Supervisor:
+                        toCode = ProcessCode.L10;
+                        break;
                 }
-                else if(Role == RoleType.Hearmaster.ToString())
+
+                rows.ForEach(x =>
                 {
-                    rows = db.Forms.Where(x=>!(x.Cost < 5000 && x.Status <= FormStatus.Passed2)).OrderByDescending(x => x.CreateTime).ToList();
-                }
-                */
+                    x.Enable = FormStrategy.CheckPassForm(x.ID, toCode, LoginUser.ID, LoginUser.Role);
+                });
                 return Json(rows);
             }
         }

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using WFS.Models;
 
 namespace WFS.Models
 {
@@ -48,5 +50,9 @@ namespace WFS.Models
         /// </summary>
         [MaxLength(100)]
         public string FileId { get; set; }
+
+        public bool Enable { get; set; }
+        
+        public List<ProcessLog> log { get; set; }
     }
 }

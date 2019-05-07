@@ -41,7 +41,7 @@ namespace WFS.Controllers
             using (WFSContext db = new WFSContext())
             {
                 var rows = db.Users.Include("Dept")
-                    .Where(x=>DeptId == null || x.Dept.Id == DeptId)
+                    .Where(x => DeptId == null || x.Dept.Id == DeptId)
                     .Select(x => new
                     {
                         x.ID,
@@ -64,7 +64,7 @@ namespace WFS.Controllers
         {
             using (var db = new WFSContext())
             {
-                SelectList depts = new SelectList(db.Deptments.Select(x=>new
+                SelectList depts = new SelectList(db.Deptments.Select(x => new
                 {
                     x.Id,
                     x.Name
@@ -96,7 +96,7 @@ namespace WFS.Controllers
                 {
                     user = db.Users.Include("Dept").FirstOrDefault(x => x.ID.Trim() == model.ID.Trim());
                     var dept = db.Deptments.Include("Users").FirstOrDefault(m => m.Id == model.DeptId);
-                    if(dept == null)
+                    if (dept == null)
                     {
                         return JavaScript("alert('部门参数错误');window.history.go(-1);");
                     }
@@ -106,7 +106,7 @@ namespace WFS.Controllers
                         user.CreateDate = DateTime.Now;
 
                         //加入部门
-                        if(dept.Users == null)
+                        if (dept.Users == null)
                         {
                             dept.Users = new List<UserEntity>()
                             {
@@ -119,7 +119,7 @@ namespace WFS.Controllers
                         }
 
                         //是否是部门主管
-                        if(model.Role == RoleType.Supervisor)
+                        if (model.Role == RoleType.Supervisor)
                         {
                             dept.Supervisor = user;
                         }
@@ -215,18 +215,11 @@ namespace WFS.Controllers
         /// <returns></returns>
         public ActionResult Setting()
         {
-            decimal GeneralLedger = MetaValueHelper.GetGeneralLedger();
-            var setting = MetaValueHelper.GetMailSetting();
-            if (setting == null)
+            using (WFSContext db = new WFSContext())
             {
-                setting = new MailSettingModel()
-                {
-                    Port = 25
-                };
+                var model = db.Settings.FirstOrDefault();
+                return View(model);
             }
-            SettingViewModel model = AutoMapper.Mapper.Map<SettingViewModel>(setting);
-            model.GeneralLedger = GeneralLedger;
-            return View(model);
         }
 
         /// <summary>
@@ -235,13 +228,17 @@ namespace WFS.Controllers
         /// <param name="value"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Setting(SettingViewModel model)
+        public ActionResult Setting(Settings model)
         {
             if (ModelState.IsValid)
             {
-                //MetaValueHelper.SetGeneralLedger(model.GeneralLedger);
-                var MailSetting = AutoMapper.Mapper.Map<MailSettingModel>(model);
-                MetaValueHelper.SetMailMeta(MailSetting);
+                using (WFSContext db = new WFSContext())
+                {
+                    ViewBag.msg = "修改完成";
+                    var setting = db.Settings.FirstOrDefault();
+                    setting.MaxCost = model.MaxCost;
+                    db.SaveChanges();
+                }
             }
             return View(model);
         }
@@ -424,6 +421,12 @@ namespace WFS.Controllers
                     Name = model.Name,
                     Supervisor = user
                 };
+
+                //把用户的角色改为部门主任
+                if (user != null)
+                {
+                    user.Role = RoleType.Supervisor;
+                }
                 db.Deptments.Add(dept);
                 db.SaveChanges();
             }
@@ -448,6 +451,12 @@ namespace WFS.Controllers
                 var user = db.Users.FirstOrDefault(x => x.ID == model.Supervisor);
                 dept.Name = model.Name.Trim();
                 dept.Supervisor = user;
+
+                //把用户的角色改为部门主任
+                if (user != null)
+                {
+                    user.Role = RoleType.Supervisor;
+                }
 
                 db.SaveChanges();
             }

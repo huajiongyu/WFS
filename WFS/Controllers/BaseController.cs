@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Filters;
 using System.Web.Security;
+using WFS.Models;
 
 namespace WFS.Controllers
 {
@@ -23,6 +24,8 @@ namespace WFS.Controllers
             base.OnAuthentication(filterContext);
         }
 
+        private UserEntity _User;
+
         public string Role {
             get {
                 var cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
@@ -30,5 +33,23 @@ namespace WFS.Controllers
                 string role = ticket.UserData;
                 return role;
             } }
+
+        public UserEntity LoginUser
+        {
+            get
+            {
+                using(WFSContext db = new WFSContext())
+                {
+                    if(_User != null)
+                    {
+                        return _User;
+                    }
+                    var cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+                    var ticket = FormsAuthentication.Decrypt(cookie.Value);
+                    _User = db.Users.FirstOrDefault(x => x.ID == ticket.Name);
+                    return _User;
+                }
+            }
+        }
     }
 }

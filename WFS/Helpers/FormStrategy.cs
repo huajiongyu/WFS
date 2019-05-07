@@ -27,10 +27,60 @@ namespace WFS.Helpers
         /// <param name="ToCode">目标状态码</param>
         /// <param name="Account">操作人员</param>
         /// <param name="Role">操作人员身份</param>
+        public static bool CheckPassForm(string FormId, ProcessCode ToCode, string Account, RoleType Role)
+        {
+            using (var db = new WFSContext())
+            {
+                var MaxCost = SettingHelper.MaxCost();
+
+                //1.查找表单
+                var form = db.Forms.Include("ProcessLog").FirstOrDefault(x => x.ID.Trim() == FormId.Trim());
+                if (form == null)
+                {
+                    throw new ArgumentNullException("没有找到表单:" + FormId);
+                }
+                else if (form.Status == FormStatus.Calcel || form.Status == FormStatus.Return)
+                {
+                    return false;
+                }
+
+                //2.检查流程是否跳级
+                var lastCode = LastCode(ToCode);
+                if (form.Cost < MaxCost && ToCode == ProcessCode.L40)//财务转帐
+                {
+                    if (form.ProcessCode != ProcessCode.L20)
+                    {
+                        return false;
+                    }
+                }
+                else if (form.ProcessCode != lastCode)
+                {
+                    return false;
+
+                }
+
+                //2.1检查权限
+                if (IsInRoleRight(ToCode, Role) == false)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// 通过表单
+        /// </summary>
+        /// <param name="FormId">表单ID</param>
+        /// <param name="ToCode">目标状态码</param>
+        /// <param name="Account">操作人员</param>
+        /// <param name="Role">操作人员身份</param>
         public static bool PassForm(string FormId, ProcessCode ToCode, FormStatus Status, string Account, RoleType Role, string Remark = "")
         {
             using (var db = new WFSContext())
             {
+                var MaxCost = SettingHelper.MaxCost();
+
                 //1.查找表单
                 var form = db.Forms.Include("ProcessLog").FirstOrDefault(x => x.ID.Trim() == FormId.Trim());
                 if (form == null)
@@ -44,7 +94,7 @@ namespace WFS.Helpers
 
                 //2.检查流程是否跳级
                 var lastCode = LastCode(ToCode);
-                if (form.Cost < 5000 && ToCode == ProcessCode.L40)//财务转帐
+                if (form.Cost < MaxCost && ToCode == ProcessCode.L40)//财务转帐
                 {
                     if (form.ProcessCode != ProcessCode.L20)
                     {

@@ -1,68 +1,25 @@
-﻿@model WFS.Models.SettingViewModel
+﻿@model WFS.Models.Settings
 @{
     ViewBag.Title = "系统参数设置";
 }
 
 <h2>设置</h2>
 <form class="form-horizontal" method="post">
-    @*<div class="form-group">
-        <label class="control-label col-md-3">总帐余额</label>
-        <div class="col-md-9">
-            @Html.TextBoxFor(x=>x.GeneralLedger)
-            @Html.ValidationMessageFor(x => x.GeneralLedger)
-        </div>
-    </div>*@
-
     <div class="form-group">
-        <label class="control-label col-md-3">发件邮箱</label>
+        <label class="control-label col-md-3">审批员审核额度：</label>
         <div class="col-md-9">
-            @Html.TextBoxFor(x => x.SendMail)
-            @Html.ValidationMessageFor(x => x.SendMail)
+            @Html.TextBoxFor(x => x.MaxCost)
+            @Html.ValidationMessageFor(x => x.MaxCost)
         </div>
     </div>
 
-    <div class="form-group">
-        <label class="control-label col-md-3">发件人名称</label>
-        <div class="col-md-9">
-            @Html.TextBoxFor(x => x.SendName)
-            @Html.ValidationMessageFor(x => x.SendName)
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label class="control-label col-md-3">发件邮箱密码</label>
-        <div class="col-md-9">
-            @Html.TextBoxFor(x => x.Password)
-            @Html.ValidationMessageFor(x => x.Password)
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label class="control-label col-md-3">SMTP地址</label>
-        <div class="col-md-9">
-            @Html.TextBoxFor(x => x.SMTP)
-            @Html.ValidationMessageFor(x => x.SMTP)
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label class="control-label col-md-3">是否启用SSL</label>
-        <div class="col-md-9">
-            @Html.CheckBoxFor(x => x.SSL)
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label class="control-label col-md-3">端口</label>
-        <div class="col-md-9">
-            @Html.TextBoxFor(x => x.Port)
-            @Html.ValidationMessageFor(x => x.Port)
-        </div>
-    </div>
 
     <div class="form-group">
         <div class="col-md-offset-3 col-md-9">
+            @Html.HiddenFor(x => x.Id)
+            @Html.HiddenFor(x => x.CountOfAll)
             <input type="submit" name="value" value="提交" />
+            <p class="text-success">@ViewBag.msg</p>
         </div>
     </div>
 </form>

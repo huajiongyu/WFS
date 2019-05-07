@@ -38,16 +38,10 @@ namespace WFS.Controllers
                     Role = RoleType.Finance
                 };
 
-
                 var dept = new Deptment()
                 {
                     Id = Guid.NewGuid(),
-                    Name = "财务部",
-                    //Supervisor = user,
-                    //Users = new List<UserEntity>()
-                    //{
-                    //    user
-                    //}
+                    Name = "财务部"
                 };
 
                 db.Deptments.Add(dept);
@@ -60,6 +54,15 @@ namespace WFS.Controllers
                 };
                 db.Users.Add(user);
                 db.Entry<Deptment>(dept).State = System.Data.Entity.EntityState.Modified;
+
+                db.Settings.RemoveRange(db.Settings.ToList());
+                db.Settings.Add(new Settings()
+                {
+                    Id = "1",
+                    CountOfAll = 20000000,
+                    MaxCost = 5000
+                });
+
                 db.SaveChanges();
 
 

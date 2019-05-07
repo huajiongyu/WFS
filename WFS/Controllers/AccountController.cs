@@ -64,19 +64,15 @@ namespace WFS.Controllers
                 //根据不同角色，跳转到不同的页面
                 switch (user.Role)
                 {
-                    case RoleType.Assessor:
-                    case RoleType.Hearmaster:
+                    case RoleType.Assessor://审核人员
+                    case RoleType.Hearmaster://校长
+                    case RoleType.Supervisor://部门主任
                         return RedirectToAction("Index", "Assessor");
-                        break;
-                    case RoleType.Finance:
-                    
+                    case RoleType.Finance://财务
                         return RedirectToAction("Appling", "Treasury");
-                        break;
-                    default:
+                    default://其他:普通用户
                         return RedirectToAction("Index", "Proposer");
-                        break;
                 }
-                
             }
         }
 

@@ -276,4 +276,31 @@ namespace WFS.Models
         /// </summary>
         public DateTime CreateDate { get; set; }
     }
+
+    /// <summary>
+    /// 系统设置
+    /// </summary>
+    public class Settings
+    {
+        /// <summary>
+        /// 系统设置
+        /// </summary>
+        [MaxLength(50)]
+        [Required]
+        [Key]
+        public string Id { get; set; }
+
+        /// <summary>
+        /// 审批人员最大审批金额
+        /// 超过的需要再由校长审批
+        /// </summary>
+        public decimal MaxCost { get; set; }
+
+        /// <summary>
+        /// 现金池
+        /// </summary>
+        [Required]
+        [Range(1, 20000000)]
+        public decimal CountOfAll { get; set; }
+    }
 }
