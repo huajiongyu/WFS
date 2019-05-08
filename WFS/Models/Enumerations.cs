@@ -25,7 +25,7 @@ namespace WFS.Models
         /// <summary>
         /// 审批驳回
         /// </summary>
-        [Display(Name = "审批驳回")]
+        [Display(Name = "驳回")]
         Return = 0,
 
         /// <summary>
@@ -88,8 +88,8 @@ namespace WFS.Models
         /// <summary>
         /// 创建表单
         /// </summary>
-        [Display(Name ="已提交")]
-        L0 = 1,
+        [Display(Name ="创建表单")]
+        L0 = 0,
 
         /// <summary>
         /// 主任审核
@@ -100,7 +100,7 @@ namespace WFS.Models
         /// <summary>
         /// 审核
         /// </summary>
-        [Display(Name = "审核")]
+        [Display(Name = "审核人员")]
         L20 = 20,
 
         /// <summary>

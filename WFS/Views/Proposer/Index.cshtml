@@ -1,4 +1,5 @@
-﻿
+﻿@using WFS.Models;
+@using WFS.Helpers;
 @{
     ViewBag.Title = "我的申请记录";
 }
@@ -18,6 +19,7 @@
                 <th>经费类型</th>
                 <th>标题</th>
                 <th>内容</th>
+                <th>金额</th>
                 <th>附件</th>
                 <th>申请日期</th>
                 <th>审批状态</th>
@@ -36,7 +38,7 @@
         var table;
         var editFlag = false;
         var types = ["预算申请", "报销申请"];
-        var StatusList = ["审批驳回", "审批中", "审批中", "审批通过", "转帐完成"];
+
         $(function () {
             table = $('#example').bootstrapTable({
                 url:'@Url.Action("TableData")',
@@ -47,13 +49,13 @@
                 pagination: true,
                 checkboxHeader: true,
                 toolbar: '#toolbar',
-                detailView: true,//父子表
-                onExpandRow: function (index, row, $detail) {
-                    console.log(index);
-                    console.log(row);
-                    console.log($detail);
-                    //$detail
-                },
+                //detailView: true,//父子表
+                //onExpandRow: function (index, row, $detail) {
+                //    console.log(index);
+                //    console.log(row);
+                //    console.log($detail);
+                //    //$detail
+                //},
                 columns: [
                     {
                         field: 'ID',
@@ -74,6 +76,8 @@
                         field:'Title'
                     }, {
                         field: 'Content'
+                    }, {
+                        field: 'Cost'
                     }, {
                         field: 'FileName',//附件
                         formatter: function (value, full, index) {
@@ -96,16 +100,16 @@
                             return date.format('yyyy-MM-dd');
                         }
                     }, {
-                        field: 'Status',
-                        formatter: function (value, full, index) {
-                            if (!full.PassDate) {
-                                return StatusList[value];
-                            }
-                            var reg = /\d+/g;
-                            var _t = full.PassDate.match(reg)[0];
-                            var date = new Date(parseInt(_t));
-                            return StatusList[value] + '<br/>' + date.format('yyyy-MM-dd');
-                        }
+                        field: 'CurentStatusDesc',
+                        //formatter: function (value, full, index) {
+                        //    if (!full.PassDate) {
+                        //        return StatusList[value];
+                        //    }
+                        //    var reg = /\d+/g;
+                        //    var _t = full.PassDate.match(reg)[0];
+                        //    var date = new Date(parseInt(_t));
+                        //    return StatusList[value] + '<br/>' + date.format('yyyy-MM-dd');
+                        //}
                     }, {
                         field: 'FinDate',
                         formatter: function (value, full, index) {
@@ -121,7 +125,7 @@
                     }, {
                         field: 'ID',
                         formatter: function (value, full, index) {
-                            if (full.Status != 1) {
+                            if (!full.Enable) {
                                 return '';
                             }
 

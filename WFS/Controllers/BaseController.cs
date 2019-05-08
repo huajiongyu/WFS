@@ -46,7 +46,7 @@ namespace WFS.Controllers
                     }
                     var cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
                     var ticket = FormsAuthentication.Decrypt(cookie.Value);
-                    _User = db.Users.FirstOrDefault(x => x.ID == ticket.Name);
+                    _User = db.Users.Include("Dept").FirstOrDefault(x => x.ID == ticket.Name);//
                     return _User;
                 }
             }

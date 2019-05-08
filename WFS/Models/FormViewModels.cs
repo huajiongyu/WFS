@@ -54,5 +54,35 @@ namespace WFS.Models
         public bool Enable { get; set; }
         
         public List<ProcessLog> log { get; set; }
+
+        /// <summary>
+        /// 当前状态描述
+        /// 如 创建表单
+        ///    主任审核：通过
+        ///    审核人员：驳回
+        /// </summary>
+        public string CurentStatusDesc { get; set; }
+
+
+        /// <summary>
+        /// 当前流程码
+        /// </summary>
+        public ProcessCode ProcessCode { get; set; }
+
+        /// <summary>
+        /// 最后一次处理时间
+        /// </summary>
+        public DateTime? ProcessTime { get; set; }
+
+        /// <summary>
+        /// 表单状态
+        /// </summary>
+        [Required]
+        public FormStatus Status { get; set; }
+
+        /// <summary>
+        /// 表单创建日期
+        /// </summary>
+        public DateTime CreateTime { get; set; }
     }
 }

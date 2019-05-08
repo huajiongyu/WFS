@@ -126,6 +126,11 @@ namespace WFS.Models
         public ProcessCode ProcessCode { get; set; }
 
         /// <summary>
+        /// 最后一次处理时间
+        /// </summary>
+        public DateTime? ProcessTime { get; set; }
+
+        /// <summary>
         /// 表单状态
         /// </summary>
         [Required]
@@ -269,7 +274,7 @@ namespace WFS.Models
         /// 操作人
         /// </summary>
 
-        public UserEntity CreateBy { get; set; }
+        public virtual string CreateBy { get; set; }
 
         /// <summary>
         /// 操作时间

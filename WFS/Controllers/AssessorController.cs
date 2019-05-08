@@ -33,7 +33,13 @@ namespace WFS.Controllers
             using (WFSContext db = new WFSContext())
             {
                 List<FormCreateModel> rows = new List<FormCreateModel>();
-                var forms = db.Forms.OrderByDescending(x => x.CreateTime).ToList();
+                var forms = //db.Forms.OrderByDescending(x => x.CreateTime).ToList();
+                    (from f in db.Forms
+                     join u in db.Users on f.CreateBy equals u.ID
+                     join d in db.Deptments on u.Dept equals d
+                     where !(LoginUser.Role == RoleType.Supervisor && d.Supervisor.ID != LoginUser.ID)
+                     select f
+                     ).ToList();
                 rows = AutoMapper.Mapper.Map<List<FormCreateModel>>(forms);
 
                 ProcessCode toCode = ProcessCode.L0;
@@ -56,6 +62,7 @@ namespace WFS.Controllers
                 rows.ForEach(x =>
                 {
                     x.Enable = FormStrategy.CheckPassForm(x.ID, toCode, LoginUser.ID, LoginUser.Role);
+                    x.CurentStatusDesc = FormStrategy.FormStatusDesc(x.ID);
                 });
                 return Json(rows);
             }
@@ -73,63 +80,100 @@ namespace WFS.Controllers
 
         #region 表单操作
         /// <summary>
-        /// 退过表单
+        /// 通过表单
         /// </summary>
         /// <param name="ID"></param>
         /// <returns></returns>
-        /*[HttpPost]
-        
+        [HttpPost]
         public ActionResult Pass(string ID)
         {
-            using (WFSContext db = new WFSContext())
+            try
             {
-                //防止空指针
-                ID = ID ?? "";
-
-                //根据ID查找表单
-                var form = db.Forms.FirstOrDefault(x => x.ID.Trim() == ID.Trim());
-                if (form == null)//如果表单为空，提示没有数据
+                ProcessCode ToCode = ProcessCode.L0;
+                switch (LoginUser.Role)
                 {
-                    return Json(new JsonResultModel()
-                    {
-                        success = false,
-                        message = "找不到数据"
-                    });
+                    case RoleType.Assessor:
+                        ToCode = ProcessCode.L20;
+                        break;
+                    case RoleType.Finance:
+                        ToCode = ProcessCode.L40;
+                        break;
+                    case RoleType.Hearmaster:
+                        ToCode = ProcessCode.L30;
+                        break;
+                    case RoleType.Supervisor:
+                        ToCode = ProcessCode.L10;
+                        break;
+                    default:
+                        throw new Exception("你没有权限执行此操作");
                 }
-
-                //检查表单状态，如果状态已通过申请，返回提示
-                if (form.Status > FormStatus.Passed)
-                {
-                    return Json(new JsonResultModel()
-                    {
-                        success = false,
-                        message = "此表单不能再做此操作。"
-                    });
-                }
-                if (form.Status == FormStatus.Passed2)
-                {
-                    form.Status = FormStatus.Passed;
-                }
-                else if (form.Cost >= 5000 && form.Status == FormStatus.Appling)
-                {
-                    form.Status = FormStatus.Passed2;
-                }
-                else if (form.Status == FormStatus.Appling)
-                {
-                    form.Status = FormStatus.Passed;
-                }
-                form.PassDate = DateTime.Now; //通过时间
-                form.PasswordBy = "jason";//通过人
-                db.Entry<FormEntity>(form).State = System.Data.Entity.EntityState.Modified;
-                db.SaveChanges();
-
+                FormStrategy.PassForm(ID, ToCode, FormStatus.Appling, User.Identity.Name, LoginUser.Role);
                 return Json(new JsonResultModel()
                 {
                     success = true,
                     message = "操作成功.已通过申请。"
                 });
+            }catch(Exception ex)
+            {
+                return Json(new JsonResultModel()
+                {
+                    success = false,
+                    message = ex.Message
+                });
             }
+
+
+            //using (WFSContext db = new WFSContext())
+            //{
+            //    //防止空指针
+            //    ID = ID ?? "";
+
+            //    //根据ID查找表单
+            //    var form = db.Forms.FirstOrDefault(x => x.ID.Trim() == ID.Trim());
+            //    if (form == null)//如果表单为空，提示没有数据
+            //    {
+            //        return Json(new JsonResultModel()
+            //        {
+            //            success = false,
+            //            message = "找不到数据"
+            //        });
+            //    }
+
+            //    //检查表单状态，如果状态已通过申请，返回提示
+            //    if (form.Status > FormStatus.Passed)
+            //    {
+            //        return Json(new JsonResultModel()
+            //        {
+            //            success = false,
+            //            message = "此表单不能再做此操作。"
+            //        });
+            //    }
+            //    if (form.Status == FormStatus.Passed2)
+            //    {
+            //        form.Status = FormStatus.Passed;
+            //    }
+            //    else if (form.Cost >= 5000 && form.Status == FormStatus.Appling)
+            //    {
+            //        form.Status = FormStatus.Passed2;
+            //    }
+            //    else if (form.Status == FormStatus.Appling)
+            //    {
+            //        form.Status = FormStatus.Passed;
+            //    }
+            //    form.PassDate = DateTime.Now; //通过时间
+            //    form.PasswordBy = "jason";//通过人
+            //    db.Entry<FormEntity>(form).State = System.Data.Entity.EntityState.Modified;
+            //    db.SaveChanges();
+
+            //    return Json(new JsonResultModel()
+            //    {
+            //        success = true,
+            //        message = "操作成功.已通过申请。"
+            //    });
+            //}
         }
+
+        /*
         
         /// <summary>
         /// 退回表单

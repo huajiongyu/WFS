@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using WFS.Models;
 
 namespace WFS.Helpers
@@ -45,6 +47,14 @@ namespace WFS.Helpers
                 }
 
                 //2.检查流程是否跳级
+                if(Role == RoleType.Supervisor)
+                {
+                    var per = db.Users.FirstOrDefault(x => x.ID == form.CreateBy);
+                    if(per.Dept.Supervisor.ID != Account)
+                    {
+                        return false;
+                    }
+                }
                 var lastCode = LastCode(ToCode);
                 if (form.Cost < MaxCost && ToCode == ProcessCode.L40)//财务转帐
                 {
@@ -93,29 +103,15 @@ namespace WFS.Helpers
                 }
 
                 //2.检查流程是否跳级
-                var lastCode = LastCode(ToCode);
-                if (form.Cost < MaxCost && ToCode == ProcessCode.L40)//财务转帐
+                if(CheckPassForm(FormId, ToCode, Account, Role) == false)
                 {
-                    if (form.ProcessCode != ProcessCode.L20)
-                    {
-                        throw new Exception("不能越级处理。");
-                    }
-                }
-                else if (form.ProcessCode != lastCode)
-                {
-                    throw new Exception("不能越级处理。");
-
-                }
-
-                //2.1检查权限
-                if(IsInRoleRight(ToCode, Role) == false)
-                {
-                    throw new Exception("您没有此权限");
+                    throw new Exception("你没有权限处理此流程.");
                 }
 
                 //3.修改表单
                 form.Status = Status;
                 form.ProcessCode = ToCode;
+                form.ProcessTime = DateTime.Now;
                 form.ReturnRemark = Remark;
 
                 //4.创建过程记录
@@ -125,7 +121,7 @@ namespace WFS.Helpers
                 }
                 ProcessLog log = new ProcessLog()
                 {
-                    CreateBy = db.Users.FirstOrDefault(x => x.ID == Account),
+                    CreateBy = Account,
                     CreateDate = DateTime.Now,
                     FormId = form.ID,
                     ProcessCode = ToCode,
@@ -197,6 +193,55 @@ namespace WFS.Helpers
                     return false;
             }
             return false;
+        }
+
+        /// <summary>
+        /// 获取枚举的Display属性值
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public static string ProcessString(ProcessCode code)
+        {
+            var type = code.GetType();//先获取这个枚举的类型
+            var field = type.GetField(code.ToString());//通过这个类型获取到值
+            var obj = (DisplayAttribute)field.GetCustomAttribute(typeof(DisplayAttribute));//得到特性
+            return obj.Name ?? "";
+        }
+
+        /// <summary>
+        /// 获取枚举的Display属性值
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public static string StatusString(FormStatus status)
+        {
+            var type = status.GetType();//先获取这个枚举的类型
+            var field = type.GetField(status.ToString());//通过这个类型获取到值
+            var obj = (DisplayAttribute)field.GetCustomAttribute(typeof(DisplayAttribute));//得到特性
+            return obj.Name ?? "";
+        }
+
+        public static string FormStatusDesc(string formid)
+        {
+            using(WFSContext db = new WFSContext())
+            {
+                var form = db.Forms.FirstOrDefault(x => x.ID == formid);
+                switch (form.Status)
+                {
+                    case FormStatus.Calcel:
+                        return "已取消";
+                    case FormStatus.Done:
+                        return "已结案";
+                    default:
+                        if(form.ProcessCode == ProcessCode.L0)
+                        {
+                            return ProcessString(form.ProcessCode);
+                        }
+                        return ProcessString(form.ProcessCode) + ":" + StatusString(form.Status);
+                    
+                }
+            }
+
         }
     }
 }

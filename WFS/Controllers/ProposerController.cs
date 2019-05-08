@@ -12,7 +12,7 @@ using WFS.Models;
 namespace WFS.Controllers
 {
     [Authorize]
-    public class ProposerController : Controller
+    public class ProposerController : BaseController
     {
         #region 显示（查询）
         // GET: Treasury
@@ -31,10 +31,24 @@ namespace WFS.Controllers
         {
             using (WFSContext db = new WFSContext())
             {
-                var rows = db.Forms.Include("ProcessLog")
-                    .Where(x=>x.CreateBy == User.Identity.Name)
-                    .OrderByDescending(x=>x.CreateTime)
-                    .ToList();
+                //var rows = db.Forms.Include("ProcessLog")
+                //    .Where(x=>x.CreateBy == User.Identity.Name)
+                //    .OrderByDescending(x=>x.CreateTime)
+                //    .ToList();
+                List<FormCreateModel> rows = new List<FormCreateModel>();
+                var forms = //db.Forms.OrderByDescending(x => x.CreateTime).ToList();
+                    (from f in db.Forms
+                     join u in db.Users on f.CreateBy equals u.ID
+                     join d in db.Deptments on u.Dept equals d
+                     where !(LoginUser.Role == RoleType.Supervisor && d.Supervisor.ID != LoginUser.ID)
+                     select f
+                     ).ToList();
+                rows = AutoMapper.Mapper.Map<List<FormCreateModel>>(forms);
+                rows.ForEach(x =>
+                {
+                    x.Enable = (x.Status == FormStatus.Appling && x.ProcessCode == ProcessCode.L0);
+                    x.CurentStatusDesc = FormStrategy.FormStatusDesc(x.ID);
+                });
                 return Json(rows);
             }
         }
@@ -116,6 +130,21 @@ namespace WFS.Controllers
                         form.FileName = FileName;
                         form.FileId = FileID;
                         form.Status = FormStatus.Appling;
+                        form.ProcessCode = ProcessCode.L0;
+                        form.ProcessTime = DateTime.Now;
+
+                        form.ProcessLog = new List<ProcessLog>()
+                        {
+                            new ProcessLog()
+                            {
+                                Id = Guid.NewGuid(),
+                                CreateBy = User.Identity.Name,
+                                CreateDate = DateTime.Now,
+                                FormId = form.ID,
+                                ProcessCode = ProcessCode.L0,
+                                status = FormStatus.Appling
+                            }
+                        };
 
                         //插入数据库
                         db.Forms.Add(form);
@@ -179,7 +208,12 @@ namespace WFS.Controllers
             using (var db = new WFSContext())
             {
                 id = id ?? "";//防止传空指针
-                var u = db.Forms.FirstOrDefault(x => x.ID.Trim() == id.Trim());
+                var u = db.Forms.Include("ProcessLog").FirstOrDefault(x => x.ID.Trim() == id.Trim());
+                if(u.ProcessLog != null)
+                {
+                    db.ProcessLogs.RemoveRange(u.ProcessLog);
+                }
+
                 db.Forms.Remove(u);
                 db.SaveChanges();
                 return Json(new JsonResultModel()

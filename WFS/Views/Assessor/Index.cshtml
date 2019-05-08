@@ -37,7 +37,15 @@
         var table;
         var editFlag = false;
         var types = ["预算申请", "报销申请"];
-        var StatusList = ["审批驳回", "审批中", "审批中", "审批通过", "转帐完成"];
+        var process = //["审批驳回", "审批中", "审批中", "审批通过", "转帐完成"];
+        {
+            '@ProcessCode.L0': '创建表单',
+            '@ProcessCode.L10': '部门主任审核',
+            '@ProcessCode.L20': '审核通过',
+            '@ProcessCode.L30': '校长审核通过',
+            '@ProcessCode.L40': '财务已转帐',
+        };
+
         $(function () {
             table = $('#example').bootstrapTable({
                 url: '@Url.Action("TableData")',
@@ -93,16 +101,17 @@
                             return date.format('yyyy-MM-dd');
                         }
                     }, {
-                        field: 'Status',
-                        formatter: function (value, full, index) {
-                            if (!full.PassDate) {
-                                return StatusList[value];
-                            }
-                            var reg = /\d+/g;
-                            var _t = full.PassDate.match(reg)[0];
-                            var date = new Date(parseInt(_t));
-                            return StatusList[value] + '<br/>' + date.format('yyyy-MM-dd');
-                        }
+                        field: 'CurentStatusDesc'
+                        //field: 'Status',
+                        //formatter: function (value, full, index) {
+                        //    if (!full.PassDate) {
+                        //        return StatusList[value];
+                        //    }
+                        //    var reg = /\d+/g;
+                        //    var _t = full.PassDate.match(reg)[0];
+                        //    var date = new Date(parseInt(_t));
+                        //    return StatusList[value] + '<br/>' + date.format('yyyy-MM-dd');
+                        //}
                     }, {
                         field: 'FinDate',
                         formatter: function (value, full, index) {
