@@ -50,7 +50,11 @@ namespace WFS.Helpers
                 if(Role == RoleType.Supervisor)
                 {
                     var per = db.Users.FirstOrDefault(x => x.ID == form.CreateBy);
-                    if(per.Dept.Supervisor.ID != Account)
+                    if(per.Dept.Supervisor.ID.Trim().Equals(Account.Trim(), StringComparison.OrdinalIgnoreCase) && form.ProcessCode == ProcessCode.L0 )
+                    {
+                        return true;
+                    }
+                    else
                     {
                         return false;
                     }

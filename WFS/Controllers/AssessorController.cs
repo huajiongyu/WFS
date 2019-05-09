@@ -32,15 +32,6 @@ namespace WFS.Controllers
         {
             using (WFSContext db = new WFSContext())
             {
-                List<FormCreateModel> rows = new List<FormCreateModel>();
-                var forms = //db.Forms.OrderByDescending(x => x.CreateTime).ToList();
-                    (from f in db.Forms
-                     join u in db.Users on f.CreateBy equals u.ID
-                     join d in db.Deptments on u.Dept equals d
-                     where !(LoginUser.Role == RoleType.Supervisor && d.Supervisor.ID != LoginUser.ID)
-                     select f
-                     ).ToList();
-                rows = AutoMapper.Mapper.Map<List<FormCreateModel>>(forms);
 
                 ProcessCode toCode = ProcessCode.L0;
                 switch (LoginUser.Role)
@@ -58,6 +49,32 @@ namespace WFS.Controllers
                         toCode = ProcessCode.L10;
                         break;
                 }
+
+                var MaxCost = SettingHelper.MaxCost();
+
+                List<FormCreateModel> rows = new List<FormCreateModel>();
+                var forms = //db.Forms.OrderByDescending(x => x.CreateTime).ToList();
+                    (from f in db.Forms
+                     join u in db.Users on f.CreateBy equals u.ID
+                     join d in db.Deptments on u.Dept equals d
+                     //1、不列出用户自己取消的表单
+                     //2、不列出还没到自己审批的表单
+                     //2.1、部门主任不列也不属于自己部门的表单
+                     where !(f.ProcessCode == ProcessCode.L0 && f.Status == FormStatus.Calcel)//用户自己取消的表单
+                     &&( (LoginUser.Role == RoleType.Supervisor && d.Supervisor.ID == LoginUser.ID)//部门主任可以查看除了用户取消以外的所有表单
+                         || (LoginUser.Role == RoleType.Assessor && f.ProcessCode >= ProcessCode.L10)//审核人员可以查看部门主任审批和自已审批过的表单
+                         || (LoginUser.Role == RoleType.Hearmaster && f.ProcessCode >= ProcessCode.L20)//校长可以查看审批人员审批过和自己审批过的表单
+                         //财务可以查看校长审批过和审批人员已通过而且额度小到需要校长审批的表单
+                         || (LoginUser.Role == RoleType.Finance && (
+                                    (f.ProcessCode >= ProcessCode.L20 && f.Cost < MaxCost)
+                                    || (f.ProcessCode >= ProcessCode.L30 && f.Cost >= MaxCost))
+                     ))
+                     select f
+                     ).ToList();
+
+                rows = AutoMapper.Mapper.Map<List<FormCreateModel>>(forms);
+
+
 
                 rows.ForEach(x =>
                 {

@@ -40,7 +40,7 @@
         var StatusList = ["审批驳回", "审批中", "审批中", "审批通过", "转帐完成"];
         $(function () {
             table = $('#example').bootstrapTable({
-                url: '@Url.Action("ApplingData")',
+                url: '@Url.Action("TableData", "Assessor")',
                 method: 'post',
                 search: true,
                 searchAlign: 'right',

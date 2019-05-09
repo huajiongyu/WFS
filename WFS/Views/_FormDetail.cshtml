@@ -5,7 +5,7 @@
 @using WFS.Models
 @model FormEntity
 @{
-    UserEntity Assessor = null;//审批人
+    //UserEntity Assessor = null;//审批人
     UserEntity Proposer = null;//申请人
     string bankinfo1 = string.Empty;
     string bankinfo2 = string.Empty;
@@ -14,7 +14,7 @@
         using (var db = new WFSContext())
         {
             //审批人
-            Assessor = db.Users.FirstOrDefault(x => x.ID.Equals(Model.PasswordBy, StringComparison.OrdinalIgnoreCase));
+            //Assessor = db.Users.FirstOrDefault(x => x.ID.Equals(Model.PasswordBy, StringComparison.OrdinalIgnoreCase));
 
             //申请人
             Proposer = db.Users.FirstOrDefault(x => x.ID.Equals(Model.CreateBy, StringComparison.OrdinalIgnoreCase));
@@ -73,7 +73,7 @@
         <a href="@(Url.Action("DownLoad", "Proposer", new { fid = Model.FileId }))" target="_blank">@Model.FileName</a>
     </div>
 </div>
-@if (Assessor != null)
+@*@if (Assessor != null)
 {
     <div class="form-group">
         <label class="control-label col-md-2">审批人</label>
@@ -81,7 +81,7 @@
             <label class="control-label">@Assessor.Name.Trim()</label>
         </div>
     </div>
-}
+}*@
 
 @if (Proposer != null)
 {

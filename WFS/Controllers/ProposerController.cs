@@ -40,7 +40,7 @@ namespace WFS.Controllers
                     (from f in db.Forms
                      join u in db.Users on f.CreateBy equals u.ID
                      join d in db.Deptments on u.Dept equals d
-                     where !(LoginUser.Role == RoleType.Supervisor && d.Supervisor.ID != LoginUser.ID)
+                     where f.CreateBy == User.Identity.Name
                      select f
                      ).ToList();
                 rows = AutoMapper.Mapper.Map<List<FormCreateModel>>(forms);

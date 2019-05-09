@@ -31,7 +31,7 @@ namespace WFS.Models
         /// <summary>
         /// 审批中
         /// </summary>
-        [Display(Name = "审批中")]
+        [Display(Name = "审批完成")]
         Appling = 1,
 
         /// <summary>
