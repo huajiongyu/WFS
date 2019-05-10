@@ -12,7 +12,6 @@ namespace WFS.Controllers
 {
     public class AccountController : Controller
     {
-
         /// <summary>
         /// 显示登录页面
         /// </summary>

@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using System.Web.Security;
 using WFS.Models;
 using WFS.Helpers;
+using WFS.Filter;
 
 namespace WFS.Controllers
 {
@@ -14,7 +15,7 @@ namespace WFS.Controllers
     public class AssessorController : BaseController
     {
         #region 显示（查询）
-        // GET: Treasury
+        [WFSAuth(Roles= "Assessor,Hearmaster,Supervisor")]
         public ActionResult Index()
         {
             ViewBag.Role = Role;
@@ -28,6 +29,7 @@ namespace WFS.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
+        [WFSAuth(Roles = "Assessor,Hearmaster,Supervisor")]
         public ActionResult TableData()
         {
             using (WFSContext db = new WFSContext())
@@ -61,7 +63,7 @@ namespace WFS.Controllers
                      //2、不列出还没到自己审批的表单
                      //2.1、部门主任不列也不属于自己部门的表单
                      where !(f.ProcessCode == ProcessCode.L0 && f.Status == FormStatus.Calcel)//用户自己取消的表单
-                     &&( (LoginUser.Role == RoleType.Supervisor && d.Supervisor.ID == LoginUser.ID)//部门主任可以查看除了用户取消以外的所有表单
+                     &&( (LoginUser.Role == RoleType.Supervisor && d.Supervisor.ID.Trim() == LoginUser.ID.Trim())//部门主任可以查看除了用户取消以外的所有表单
                          || (LoginUser.Role == RoleType.Assessor && f.ProcessCode >= ProcessCode.L10)//审核人员可以查看部门主任审批和自已审批过的表单
                          || (LoginUser.Role == RoleType.Hearmaster && f.ProcessCode >= ProcessCode.L20)//校长可以查看审批人员审批过和自己审批过的表单
                          //财务可以查看校长审批过和审批人员已通过而且额度小到需要校长审批的表单
@@ -102,6 +104,7 @@ namespace WFS.Controllers
         /// <param name="ID"></param>
         /// <returns></returns>
         [HttpPost]
+        [WFSAuth(Roles = "Assessor,Hearmaster,Supervisor")]
         public ActionResult Pass(string ID)
         {
             try
@@ -138,60 +141,8 @@ namespace WFS.Controllers
                     message = ex.Message
                 });
             }
-
-
-            //using (WFSContext db = new WFSContext())
-            //{
-            //    //防止空指针
-            //    ID = ID ?? "";
-
-            //    //根据ID查找表单
-            //    var form = db.Forms.FirstOrDefault(x => x.ID.Trim() == ID.Trim());
-            //    if (form == null)//如果表单为空，提示没有数据
-            //    {
-            //        return Json(new JsonResultModel()
-            //        {
-            //            success = false,
-            //            message = "找不到数据"
-            //        });
-            //    }
-
-            //    //检查表单状态，如果状态已通过申请，返回提示
-            //    if (form.Status > FormStatus.Passed)
-            //    {
-            //        return Json(new JsonResultModel()
-            //        {
-            //            success = false,
-            //            message = "此表单不能再做此操作。"
-            //        });
-            //    }
-            //    if (form.Status == FormStatus.Passed2)
-            //    {
-            //        form.Status = FormStatus.Passed;
-            //    }
-            //    else if (form.Cost >= 5000 && form.Status == FormStatus.Appling)
-            //    {
-            //        form.Status = FormStatus.Passed2;
-            //    }
-            //    else if (form.Status == FormStatus.Appling)
-            //    {
-            //        form.Status = FormStatus.Passed;
-            //    }
-            //    form.PassDate = DateTime.Now; //通过时间
-            //    form.PasswordBy = "jason";//通过人
-            //    db.Entry<FormEntity>(form).State = System.Data.Entity.EntityState.Modified;
-            //    db.SaveChanges();
-
-            //    return Json(new JsonResultModel()
-            //    {
-            //        success = true,
-            //        message = "操作成功.已通过申请。"
-            //    });
-            //}
         }
-
-        /*
-        
+      
         /// <summary>
         /// 退回表单
         /// </summary>
@@ -199,49 +150,45 @@ namespace WFS.Controllers
         /// <param name="Remark"></param>
         /// <returns></returns>
         [HttpPost]
+        [WFSAuth(Roles = "Assessor,Hearmaster,Supervisor")]
         public ActionResult CallBack(string ID, string Remark)
         {
-            using (WFSContext db = new WFSContext())
+            try
             {
-                //防止空指针
-                ID = ID ?? "";
-
-                //根据ID查找表单
-                var form = db.Forms.FirstOrDefault(x => x.ID.Trim() == ID.Trim());
-                if (form == null)//如果表单为空，提示没有数据
+                ProcessCode ToCode = ProcessCode.L0;
+                switch (LoginUser.Role)
                 {
-                    return Json(new JsonResultModel()
-                    {
-                        success = false,
-                        message = "找不到数据"
-                    });
+                    case RoleType.Assessor:
+                        ToCode = ProcessCode.L20;
+                        break;
+                    case RoleType.Finance:
+                        ToCode = ProcessCode.L40;
+                        break;
+                    case RoleType.Hearmaster:
+                        ToCode = ProcessCode.L30;
+                        break;
+                    case RoleType.Supervisor:
+                        ToCode = ProcessCode.L10;
+                        break;
+                    default:
+                        throw new Exception("你没有权限执行此操作");
                 }
-
-                //检查表单状态，如果状态已通过申请，返回提示
-                if (form.Status > FormStatus.Passed)
-                {
-                    return Json(new JsonResultModel()
-                    {
-                        success = false,
-                        message = "此表单不能再做此操作。"
-                    });
-                }
-
-                form.Status = FormStatus.Return;
-                form.PassDate = DateTime.Now; //通过时间
-                form.PasswordBy = "jason";//通过人
-                form.ReturnRemark = Remark;
-                db.Entry<FormEntity>(form).State = System.Data.Entity.EntityState.Modified;
-                db.SaveChanges();
-
+                FormStrategy.PassForm(ID, ToCode, FormStatus.Return, User.Identity.Name, LoginUser.Role, Remark);
                 return Json(new JsonResultModel()
                 {
                     success = true,
-                    message = "审批驳回成功。"
+                    message = "操作成功。"
+                });
+            }catch(Exception ex)
+            {
+                return Json(new JsonResultModel()
+                {
+                    success = false,
+                    message = ex.Message
                 });
             }
         }
-*/
+
         #endregion
 
 

@@ -26,83 +26,82 @@
         }
     }
 }
-
+<h3 class="text-center bg-primary">表单详情</h3>
 <div class="form-group">
-    <label class="control-label col-md-2">单号</label>
-    <div class="col-md-10">
+    <label class="control-label col-md-2">单号:</label>
+    <div class="col-md-4">
         @Html.HiddenFor(m => m.ID)
         @if (Model != null)
-            {
+        {
             <label class="control-label">@Model.ID</label>
         }
     </div>
-</div>
-
-<div class="form-group">
-    <label class="control-label col-md-2">类型</label>
-    <div class="col-md-10">
+    <label class="control-label col-md-2">类型:</label>
+    <div class="col-md-4">
         @Html.EnumDropDownListFor(x => x.Type, new { @class = "form-control max-width-280", @readonly = "readonly" })
     </div>
 </div>
 
 <div class="form-group">
-    <label class="control-label col-md-2">标题</label>
-    <div class="col-md-10">
-        <label class="control-label">@Model.Title</label>
-    </div>
-</div>
-
-<div class="form-group">
-    <label class="control-label col-md-2">内容</label>
-    <div class="col-md-10">
-        <label class="control-label">@Model.Content</label>
-
-    </div>
-</div>
-
-<div class="form-group">
-    <label class="control-label col-md-2">金额</label>
-    <div class="col-md-10">
+    <label class="control-label col-md-2">金额:</label>
+    <div class="col-md-4">
         <label class="control-label">@Model.Cost</label>
     </div>
-</div>
-
-<div class="form-group">
-    <label class="control-label col-md-2">附件</label>
-    <div class="col-md-10">
+    <label class="control-label col-md-2">附件:</label>
+    <div class="col-md-4">
         <a href="@(Url.Action("DownLoad", "Proposer", new { fid = Model.FileId }))" target="_blank">@Model.FileName</a>
     </div>
 </div>
-@*@if (Assessor != null)
-{
-    <div class="form-group">
-        <label class="control-label col-md-2">审批人</label>
-        <div class="col-md-10">
-            <label class="control-label">@Assessor.Name.Trim()</label>
-        </div>
-    </div>
-}*@
 
 @if (Proposer != null)
 {
     <div class="form-group">
-        <label class="control-label col-md-2">申请人</label>
+        <label class="control-label col-md-2">申请人:</label>
         <div class="col-md-10">
             <label class="control-label">@Proposer.Name.Trim()</label>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="control-label col-md-2">银行帐号</label>
-        <div class="col-md-10">
+        <label class="control-label col-md-2">银行帐号:</label>
+        <div class="col-md-4">
             <label class="control-label">@(bankinfo1)</label>
         </div>
-    </div>
-
-    <div class="form-group">
-        <label class="control-label col-md-2">开户行</label>
-        <div class="col-md-10">
+        <label class="control-label col-md-2">开户行:</label>
+        <div class="col-md-4">
             <label class="control-label">@(bankinfo2)</label>
         </div>
     </div>
+
 }
+
+<div class="form-group">
+    <label class="control-label col-md-2">标题:</label>
+    <div class="col-md-4">
+        <label class="control-label">@Model.Title</label>
+    </div>
+
+
+</div>
+
+<div class="form-group">
+    <label class="control-label col-md-2">内容:</label>
+    <div class="col-md-10">
+        <label class="control-label">@Model.Content</label>
+    </div>
+</div>
+
+@*<div class="form-group">
+
+    </div>*@
+@*@if (Assessor != null)
+    {
+        <div class="form-group">
+            <label class="control-label col-md-2">审批人</label>
+            <div class="col-md-10">
+                <label class="control-label">@Assessor.Name.Trim()</label>
+            </div>
+        </div>
+    }*@
+
+

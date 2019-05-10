@@ -152,6 +152,7 @@
     <Compile Include="Controllers\InitController.cs" />
     <Compile Include="Controllers\ProposerController.cs" />
     <Compile Include="Controllers\TreasuryController.cs" />
+    <Compile Include="Filter\WFSAuth.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

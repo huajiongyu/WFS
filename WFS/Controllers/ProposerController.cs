@@ -6,12 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using WFS.Filter;
 using WFS.Helpers;
 using WFS.Models;
 
 namespace WFS.Controllers
 {
-    [Authorize]
+    [Authorize]//登录验证
+    [WFSAuth(Roles = "User")]//权限管理筛选器
     public class ProposerController : BaseController
     {
         #region 显示（查询）

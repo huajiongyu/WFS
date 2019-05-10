@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using WFS.Filter;
 using WFS.Helpers;
 using WFS.Models;
 
@@ -12,6 +13,7 @@ namespace WFS.Controllers
 {
     //[Authorize(Roles = "Finance;2")]
     [Authorize]
+    [WFSAuth(Roles = "Finance")]
     public class TreasuryController : Controller
     {
         #region 显示（查询）用户信息

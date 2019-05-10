@@ -29,7 +29,32 @@
         <!-- tbody是必须的 -->
     </table>
 </div>
-@ViewBag.Role
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal-reason">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">驳回原因</h4>
+            </div>
+            <div class="modal-body form-horizontal">
+                <div class="form-group">
+                    <label class="control-label col-md-3">请填写驳回原因：</label>
+                    <div class="col-md-9">
+                        <input type="hidden" id="hide-id" />
+                        <textarea class="form-control" id="reason" rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="_CallBack()">确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
 @section scripts{
 
     <script>
@@ -37,14 +62,6 @@
         var table;
         var editFlag = false;
         var types = ["预算申请", "报销申请"];
-        var process = //["审批驳回", "审批中", "审批中", "审批通过", "转帐完成"];
-        {
-            '@ProcessCode.L0': '创建表单',
-            '@ProcessCode.L10': '部门主任审核',
-            '@ProcessCode.L20': '审核通过',
-            '@ProcessCode.L30': '校长审核通过',
-            '@ProcessCode.L40': '财务已转帐',
-        };
 
         $(function () {
             table = $('#example').bootstrapTable({
@@ -166,20 +183,30 @@
         }
 
         /**
-         * 删除数据
+         * 驳回
          * @@param name
          */
-        function CallBack(_data) {
+        function CallBack(id) {
+            $("#hide-id").val(id);
+            $("#modal-reason").modal('show');
+        }
+
+        function _CallBack() {
             var conf = confirm('确定驳回此表单吗?');
             if (!conf) return;
+            var _data = $("#hide-id").val();
+            //alert(_data);
+            //return;
             $.ajax({
                 url: "@Url.Action("CallBack")",
-                data: { id: _data },
+                data: {
+                    id: _data, Remark: $("#reason").val()
+                },
                 method: 'post',
                 success: function (data) {
                     alert(data.message);
                     $('#example').bootstrapTable('refresh');
-                    //console.log("成功" + data);
+                    $("#modal-reason").modal('hide');
                 }
             });
         }

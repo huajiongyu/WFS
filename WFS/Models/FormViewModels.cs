@@ -84,5 +84,10 @@ namespace WFS.Models
         /// 表单创建日期
         /// </summary>
         public DateTime CreateTime { get; set; }
+
+        /// <summary>
+        /// 退回原因
+        /// </summary>
+        public string ReturnRemark { get; set; }
     }
 }

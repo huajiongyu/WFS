@@ -32,7 +32,8 @@ namespace WFS.Controllers
                 var ticket = FormsAuthentication.Decrypt(cookie.Value);
                 string role = ticket.UserData;
                 return role;
-            } }
+            }
+        }
 
         public UserEntity LoginUser
         {
