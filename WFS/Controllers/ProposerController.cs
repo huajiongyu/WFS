@@ -193,7 +193,10 @@ namespace WFS.Controllers
                     }
                 }
 
-                return JavaScript("alert('" + errinfo.ToString() + "')");
+                Response.Write("<script type='text/javascript'>alert('" + errinfo.ToString() +"');window.history.go(-1);</script>");//(可以用来实现在iframe中跳转到指定页面.)
+                Response.End();
+                return Content("");
+                //return JavaScript("alert('" + errinfo.ToString() + "')");
             }            
         }
         #endregion

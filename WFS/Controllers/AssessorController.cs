@@ -29,7 +29,7 @@ namespace WFS.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [WFSAuth(Roles = "Assessor,Hearmaster,Supervisor")]
+        [WFSAuth(Roles = "Assessor,Hearmaster,Supervisor,Finance")]
         public ActionResult TableData()
         {
             using (WFSContext db = new WFSContext())
@@ -67,9 +67,12 @@ namespace WFS.Controllers
                          || (LoginUser.Role == RoleType.Assessor && f.ProcessCode >= ProcessCode.L10)//审核人员可以查看部门主任审批和自已审批过的表单
                          || (LoginUser.Role == RoleType.Hearmaster && f.ProcessCode >= ProcessCode.L20)//校长可以查看审批人员审批过和自己审批过的表单
                          //财务可以查看校长审批过和审批人员已通过而且额度小到需要校长审批的表单
-                         || (LoginUser.Role == RoleType.Finance && (
+                         || (LoginUser.Role == RoleType.Finance 
+                            && (f.Status == FormStatus.Appling || f.Status == FormStatus.Done)
+                            && (
                                     (f.ProcessCode >= ProcessCode.L20 && f.Cost < MaxCost)
-                                    || (f.ProcessCode >= ProcessCode.L30 && f.Cost >= MaxCost))
+                                    || (f.ProcessCode >= ProcessCode.L30 && f.Cost >= MaxCost)
+                             )
                      ))
                      select f
                      ).ToList();

@@ -70,6 +70,8 @@ namespace WFS.Models
         public DateTime CreateDate { get; set; }
 
         public Guid? DeptId { get; set; }
+
+        public bool NewUser { get; set; }
     }
 
     /// <summary>

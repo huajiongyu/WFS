@@ -14,7 +14,7 @@ namespace WFS.Controllers
     //[Authorize(Roles = "Finance;2")]
     [Authorize]
     [WFSAuth(Roles = "Finance")]
-    public class TreasuryController : Controller
+    public class TreasuryController : BaseController
     {
         #region 显示（查询）用户信息
         /// <summary>
@@ -66,6 +66,10 @@ namespace WFS.Controllers
         {
             using (var db = new WFSContext())
             {
+                //if(id.Trim().Equals(LoginUser.ID, StringComparison.OrdinalIgnoreCase))
+                //{
+                //    return JavaScript("alert('不能修改当前登录帐号');")
+                //}
                 SelectList depts = new SelectList(db.Deptments.Select(x => new
                 {
                     x.Id,
@@ -74,7 +78,10 @@ namespace WFS.Controllers
                 ViewBag.Depts = depts;
                 if (string.IsNullOrWhiteSpace(id))
                 {
-                    return View(new UserViewModel());
+                    return View(new UserViewModel()
+                    {
+                        NewUser = true
+                    });
                 }
                 else
                 {
@@ -96,6 +103,12 @@ namespace WFS.Controllers
                 UserEntity user;
                 using (WFSContext db = new WFSContext())
                 {
+                    if(model.NewUser && db.Users.Any(x=>x.ID.Trim() == model.ID.Trim()))
+                    {
+                        Response.Write("<script type='text/javascript'>alert('此ID已被使用');window.history.go(-1);</script>");//(可以用来实现在iframe中跳转到指定页面.)
+                        Response.End();
+                        return Content("alert('此ID已被使用');window.history.go(-1);");
+                    }
                     user = db.Users.Include("Dept").FirstOrDefault(x => x.ID.Trim() == model.ID.Trim());
                     var dept = db.Deptments.Include("Users").FirstOrDefault(m => m.Id == model.DeptId);
                     if (dept == null)
@@ -134,13 +147,18 @@ namespace WFS.Controllers
                         user.Password = model.Password;
                         user.Disabled = model.Disabled;
                         user.EMail = model.EMail;
-                        user.Role = model.Role;
+                        
                         user.BankName = model.BankName;
                         user.BankProvice = model.BankProvice;
                         user.BankCity = model.BankCity;
                         user.BankCity2 = model.BankCity2;
                         user.BankSubName = model.BankSubName;
                         user.BankAccount = model.BankAccount;
+
+                        if (!model.ID.Trim().Equals(LoginUser.ID, StringComparison.OrdinalIgnoreCase))
+                        {
+                            user.Role = model.Role;
+                        }
 
                         //是否是部门主管
                         if (model.Role == RoleType.Supervisor)
@@ -239,6 +257,7 @@ namespace WFS.Controllers
                     ViewBag.msg = "修改完成";
                     var setting = db.Settings.FirstOrDefault();
                     setting.MaxCost = model.MaxCost;
+                    setting.CountOfAll = model.CountOfAll;
                     db.SaveChanges();
                 }
             }
@@ -253,7 +272,7 @@ namespace WFS.Controllers
         /// <returns></returns>
         public ActionResult Appling()
         {
-            decimal GeneralLedger = MetaValueHelper.GetGeneralLedger();
+            decimal GeneralLedger = SettingHelper.CountOfAll();
             ViewBag.GeneralLedger = GeneralLedger;
             return View();
         }
@@ -266,11 +285,14 @@ namespace WFS.Controllers
         [HttpPost]
         public ActionResult ApplingData()
         {
+            var MaxCost = SettingHelper.MaxCost();
             using (WFSContext db = new WFSContext())
             {
                 //只显示审批通过和已转帐的表单
                 var rows = db.Forms
-                    //.Where(x => x.Status >= FormStatus.Passed)
+                    .Where(x => (x.ProcessCode >= ProcessCode.L20 && x.Cost < MaxCost)
+                                    || (x.ProcessCode >= ProcessCode.L30 && x.Cost >= MaxCost)
+                                    )
                     .OrderByDescending(x => x.CreateTime)
                     .ToList();
                 return Json(rows);
@@ -312,10 +334,13 @@ namespace WFS.Controllers
                 //    return Content("此申请尚未审核通过或已转帐，操作已取消。");
                 //}
 
-                var _GeneralLedger = MetaValueHelper.GetGeneralLedger();
+                var _GeneralLedger = SettingHelper.CountOfAll();
                 if (_GeneralLedger < form.Cost)
                 {
-                    return Content("当前总帐余额不足，操作已取消。");
+                    Response.Write(string.Format("<script type='text/javascript'>alert('当前总帐余额不足，操作已取消。');window.location.href = '{0}';</script>", Url.Action("Appling")));//(可以用来实现在iframe中跳转到指定页面.)
+                    Response.End();
+                    return Content("");
+                    //return JavaScript(string.Format("alert('当前总帐余额不足，操作已取消。');window.location.href = '{0}'", Url.Action("Appling")));
                 }
 
                 //修改状态
@@ -341,31 +366,43 @@ namespace WFS.Controllers
                 }
 
                 //处理人
-                //form.FinBy = User.Identity.Name;//TODO
+                form.FinBy = User.Identity.Name;//TODO
 
                 ////处理时间
-                //form.FinDate = DateTime.Now;
+                form.FinDate = DateTime.Now;
+                form.Status = FormStatus.Done;
 
                 db.Entry<FormEntity>(form).State = System.Data.Entity.EntityState.Modified;
+
+                db.ProcessLogs.Add(new ProcessLog()
+                {
+                    Id = Guid.NewGuid(),
+                    FormId = form.ID,
+                    CreateBy = User.Identity.Name,
+                    CreateDate = DateTime.Now,
+                    ProcessCode = ProcessCode.L40,
+                    status = FormStatus.Done
+                });
 
                 //保存到数据库
                 db.SaveChanges();
 
                 //扣除总帐
-                MetaValueHelper.SetGeneralLedger(_GeneralLedger - form.Cost);
+                //MetaValueHelper.SetGeneralLedger(_GeneralLedger - form.Cost);
+                SettingHelper.SetCountOfAll(_GeneralLedger - form.Cost);
 
                 //发送邮件
-                var user = db.Users.FirstOrDefault(x => x.ID == form.CreateBy);
-                if (user != null && !string.IsNullOrWhiteSpace(user.EMail))
-                {
-                    string Subject = "经费申请已转帐--" + form.Title.Trim(),
-                        Content = @"{0} 您好：
-                                            你的经费申请单已经转帐。请您留意到帐情况。
-                                            单号：{1}
-                                            标题:{2}";
-                    Content = string.Format(Content, user.Name.Trim(), form.ID, form.Title);
-                    MailHelpers.SendMail(user.EMail, Subject, Content);
-                }
+                //var user = db.Users.FirstOrDefault(x => x.ID == form.CreateBy);
+                //if (user != null && !string.IsNullOrWhiteSpace(user.EMail))
+                //{
+                //    string Subject = "经费申请已转帐--" + form.Title.Trim(),
+                //        Content = @"{0} 您好：
+                //                            你的经费申请单已经转帐。请您留意到帐情况。
+                //                            单号：{1}
+                //                            标题:{2}";
+                //    Content = string.Format(Content, user.Name.Trim(), form.ID, form.Title);
+                //    //MailHelpers.SendMail(user.EMail, Subject, Content);
+                //}
 
                 return RedirectToAction("Appling");
             }

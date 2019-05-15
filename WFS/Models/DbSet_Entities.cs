@@ -173,6 +173,9 @@ namespace WFS.Models
         public string FinFileId { get; set; }
 
         public virtual ICollection<ProcessLog> ProcessLog { get; set; }
+
+        public string FinBy { get; set; }
+        public DateTime? FinDate { get; set; }
     }
 
     /// <summary>

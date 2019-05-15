@@ -89,5 +89,8 @@ namespace WFS.Models
         /// 退回原因
         /// </summary>
         public string ReturnRemark { get; set; }
+
+        public string FinBy { get; set; }
+        public DateTime? FinDate { get; set; }
     }
 }

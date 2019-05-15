@@ -93,15 +93,13 @@
                             return date.format('yyyy-MM-dd');
                         }
                     }, {
-                        field: 'Status',
+                        field: 'CurentStatusDesc',
                         formatter: function (value, full, index) {
-                            if (!full.PassDate) {
-                                return StatusList[value];
+                            if (full.ReturnRemark) {
+                                return value + '<br/>驳回原因：' + full.ReturnRemark;
+                            } else {
+                                return value;
                             }
-                            var reg = /\d+/g;
-                            var _t = full.PassDate.match(reg)[0];
-                            var date = new Date(parseInt(_t));
-                            return StatusList[value] + '<br/>' + date.format('yyyy-MM-dd');
                         }
                     }, {
                         field: 'FinDate',
@@ -129,7 +127,7 @@
                             ].join('');
 
                             //只有表单状态在申请中才显示操作按钮
-                            if (full.Status == @((int)FormStatus.Appling) || full.Status == @((int)FormStatus.Done)) {
+                            if (full.Status == @((int)FormStatus.Appling)) {
                                 return op;
                             } else {
                                 return '';
