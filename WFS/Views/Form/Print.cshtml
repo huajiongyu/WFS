@@ -1,0 +1,89 @@
+﻿@model WFS.Models.FormPrintModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>打印</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <style>
+        body, html{
+            height:100%;
+            font-size:14px;
+        }
+
+        body{
+            padding:16px;
+        }
+
+        tr, td{
+            padding:8px 16px;
+        }
+    </style>
+</head>
+<body>
+    <table style="width:100%;">
+        <tr>
+            <td colspan="3">
+                <h3 class="text-center">Middle School</h3>
+            </td>
+        </tr>
+        <tr>
+            <td class="text-center"><h4>预算单</h4></td>
+            <td></td>
+            <td  class="text-center">条形码</td>
+        </tr>
+        <tr>
+            <td class="text-center"><h4>部门：</h4></td>
+            <td class="text-center"><h4>申请人：</h4></td>
+            <td class="text-center"><h4>凭证日期：</h4></td>
+        </tr>
+        <tr>
+            <td colspan="3" style="border-top: 1px solid;border-bottom: 1px solid;">标题:</td>
+        </tr>
+        <tr>
+            <td colspan="3" style="border-top: 1px solid;">详情:</td>
+        </tr>
+        <tr>
+            <td colspan="3" style="border-bottom: 1px solid;">这里是详情</td>
+        </tr>
+        <tr style="border-top: 1px solid;border-bottom: 1px solid;">
+            <td colspan="2">金额(大写):</td>
+            <td colspan="1">金额(小写):</td>
+        </tr>
+        <tr>
+            <td>审核情况</td>
+        </tr>
+        <tr>
+            <td colspan="3" style="padding:0 16px;">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>部门主任</th>
+                            <th>审核部门</th>
+                            <th>校长</th>
+                            <th>财务</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>华炯宇2019/5/9 通过</td>
+                            <td>花猫 2019/6/7 通过</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

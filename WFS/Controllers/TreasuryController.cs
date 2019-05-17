@@ -66,10 +66,6 @@ namespace WFS.Controllers
         {
             using (var db = new WFSContext())
             {
-                //if(id.Trim().Equals(LoginUser.ID, StringComparison.OrdinalIgnoreCase))
-                //{
-                //    return JavaScript("alert('不能修改当前登录帐号');")
-                //}
                 SelectList depts = new SelectList(db.Deptments.Select(x => new
                 {
                     x.Id,
@@ -137,6 +133,11 @@ namespace WFS.Controllers
                         if (model.Role == RoleType.Supervisor)
                         {
                             dept.Supervisor = user;
+                            var oldsupervisor = dept.Users.Where(x => x.Role == RoleType.Supervisor && x.ID.Trim() != user.ID.Trim()).ToList();
+                            oldsupervisor.ForEach(x =>
+                            {
+                                x.Role = RoleType.User;
+                            });
                         }
 
                         db.Users.Add(user);
@@ -164,6 +165,11 @@ namespace WFS.Controllers
                         if (model.Role == RoleType.Supervisor)
                         {
                             dept.Supervisor = user;
+                            var oldsupervisor = dept.Users.Where(x => x.Role == RoleType.Supervisor && x.ID.Trim() != user.ID.Trim()).ToList();
+                            oldsupervisor.ForEach(x =>
+                            {
+                                x.Role = RoleType.User;
+                            });
                         }
 
                         //从旧部门移除
@@ -409,7 +415,6 @@ namespace WFS.Controllers
         }
         #endregion
 
-
         #region 部门
         /// <summary>
         /// 部门编辑/创建页面
@@ -453,19 +458,15 @@ namespace WFS.Controllers
         {
             using (WFSContext db = new WFSContext())
             {
-                var user = db.Users.FirstOrDefault(x => x.ID == model.Supervisor);
+                //var user = db.Users.FirstOrDefault(x => x.ID == model.Supervisor);
                 Deptment dept = new Deptment()
                 {
                     Id = Guid.NewGuid(),
-                    Name = model.Name,
-                    Supervisor = user
+                    Name = model.Name
                 };
 
                 //把用户的角色改为部门主任
-                if (user != null)
-                {
-                    user.Role = RoleType.Supervisor;
-                }
+                
                 db.Deptments.Add(dept);
                 db.SaveChanges();
             }
@@ -487,15 +488,8 @@ namespace WFS.Controllers
                 {
                     return Content("参数错误");
                 }
-                var user = db.Users.FirstOrDefault(x => x.ID == model.Supervisor);
-                dept.Name = model.Name.Trim();
-                dept.Supervisor = user;
 
-                //把用户的角色改为部门主任
-                if (user != null)
-                {
-                    user.Role = RoleType.Supervisor;
-                }
+                dept.Name = model.Name.Trim();
 
                 db.SaveChanges();
             }

@@ -149,6 +149,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AssessorController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\FormController.cs" />
     <Compile Include="Controllers\InitController.cs" />
     <Compile Include="Controllers\ProposerController.cs" />
     <Compile Include="Controllers\TreasuryController.cs" />
@@ -167,6 +168,7 @@
     <Compile Include="Models\DbSet_Entities.cs" />
     <Compile Include="Models\DeptViewModels.cs" />
     <Compile Include="Models\Enumerations.cs" />
+    <Compile Include="Models\FormPrintModel.cs" />
     <Compile Include="Models\FormViewModels.cs" />
     <Compile Include="Models\JsonResultModel.cs" />
     <Compile Include="Models\MailMetaSetModel.cs" />
@@ -1208,6 +1210,7 @@
     <Content Include="Web.config" />
     <Content Include="Views\Treasury\EditDept.cshtml" />
     <Content Include="Views\Treasury\CreateDept.cshtml" />
+    <Content Include="Views\Form\Print.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
