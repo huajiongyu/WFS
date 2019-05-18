@@ -145,7 +145,9 @@
                         field: 'ID',
                         formatter: function (value, full, index) {
                             //通过与退回按钮
+                            var print = '<a class="btn btn-sm btn-primary" href="@(Url.Action("print","Form"))?id=' + value + '" target=_blank>打印</a>';
                             var op = [
+                                print,
                                 "<button type='button' class='btn btn-sm btn-primary' onclick='pass(\"" + value + "\")'>通过</button>",
                                 "&nbsp;",
                                 "<button type='button' class='btn btn-sm btn-danger' onclick='CallBack(\"" + value + "\")'>驳回</button>"
@@ -155,7 +157,7 @@
                             if (full.Enable) {
                                 return op;
                             } else {
-                                return '';
+                                return print;
                             }
                         }
                     }

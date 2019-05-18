@@ -60,7 +60,7 @@
                     {
                         field: 'ID',
                         formatter: function (value, full, index) {
-                            var a = '<a target="_blank" href="@(Url.Action("Detail"))?id=' + value + '">' + value + '</a>';
+                            var a = '<a target="_blank" href="@(Url.Action("Detail","Assessor"))?id=' + value + '">' + value + '</a>';
                             return a;
                         }
                     },
@@ -123,11 +123,13 @@
                     }, {
                         field: 'ID',
                         formatter: function (value, full, index) {
+                            var print = '<a class="btn btn-sm btn-primary" href="@(Url.Action("print","Form"))?id=' + value + '" target=_blank>打印</a>';
                             if (!full.Enable) {
-                                return '';
+                                return print;
                             }
 
                             var op = [
+                                print,
                                 "<a class='btn btn-sm btn-primary' href=\"@(Url.Action("Edit"))?ID=" + value + "\">修改</a>",
                                 "&nbsp;",
                                 "<button type='button' class='btn btn-sm btn-danger' onclick='del(\"" + value + "\")'>删除</button>"
