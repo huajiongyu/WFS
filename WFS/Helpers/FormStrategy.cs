@@ -130,7 +130,8 @@ namespace WFS.Helpers
                     FormId = form.ID,
                     ProcessCode = ToCode,
                     Remark = Remark,
-                    Id = Guid.NewGuid()
+                    Id = Guid.NewGuid(),
+                    status = Status
                 };
                 form.ProcessLog.Add(log);
 

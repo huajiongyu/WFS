@@ -42,25 +42,29 @@ namespace WFS.Controllers
                 var p1 = form.ProcessLog.FirstOrDefault(x => x.ProcessCode == ProcessCode.L10);
                 if(p1 != null)
                 {
-                    model.P1 = string.Format("{0}<br/>{1}<br/>{2}", p1.CreateBy, p1.CreateDate.ToString("yyyy/MM/dd"), FormStrategy.StatusString(p1.status));
+                    var name = db.Users.Where(x => x.ID.Trim() == p1.CreateBy.Trim()).Select(x=>x.Name.Trim()).FirstOrDefault();
+                    model.P1 = string.Format("{0}<br/>{1}<br/>{2}", name, p1.CreateDate.ToString("yyyy/MM/dd"), FormStrategy.StatusString(p1.status));
                 }
 
                 var p2 = form.ProcessLog.FirstOrDefault(x => x.ProcessCode == ProcessCode.L20);
                 if (p2 != null)
                 {
-                    model.P2 = string.Format("{0}<br/>{1}<br/>{2}", p2.CreateBy, p2.CreateDate.ToString("yyyy/MM/dd"), FormStrategy.StatusString(p2.status));
+                    var name = db.Users.Where(x => x.ID.Trim() == p2.CreateBy.Trim()).Select(x => x.Name.Trim()).FirstOrDefault();
+                    model.P2 = string.Format("{0}<br/>{1}<br/>{2}", name, p2.CreateDate.ToString("yyyy/MM/dd"), FormStrategy.StatusString(p2.status));
                 }
 
                 var p3 = form.ProcessLog.FirstOrDefault(x => x.ProcessCode == ProcessCode.L30);
                 if (p3 != null)
                 {
-                    model.P3 = string.Format("{0}<br/>{1}<br/>{2}", p3.CreateBy, p3.CreateDate.ToString("yyyy/MM/dd"), FormStrategy.StatusString(p3.status));
+                    var name = db.Users.Where(x => x.ID.Trim() == p3.CreateBy.Trim()).Select(x => x.Name.Trim()).FirstOrDefault();
+                    model.P3 = string.Format("{0}<br/>{1}<br/>{2}", name, p3.CreateDate.ToString("yyyy/MM/dd"), FormStrategy.StatusString(p3.status));
                 }
 
-                var p4 = form.ProcessLog.FirstOrDefault(x => x.ProcessCode == ProcessCode.L40);
-                if (p4 != null)
+               // var p4 = form.ProcessLog.FirstOrDefault(x => x.ProcessCode == ProcessCode.L40);
+                if (form.FinDate != null)
                 {
-                    model.P4 = string.Format("{0}<br/>{1}<br/>{2}", p4.CreateBy, p4.CreateDate.ToString("yyyy/MM/dd"), FormStrategy.StatusString(p4.status));
+                    var name = db.Users.Where(x => x.ID.Trim() == form.FinBy.Trim()).Select(x => x.Name.Trim()).FirstOrDefault();
+                    model.P4 = string.Format("{0}<br/>{1}<br/>{2}", name, ((DateTime)form.FinDate).ToString("yyyy/MM/dd"), "转帐");
                 }
 
                 model.CostChinese = ConvertToChinese(model.Cost);
